@@ -1,7 +1,7 @@
 package ChessAyeEye;
 
-import java.util.Arrays;
-
+import java.util.Map;
+import java.util.HashMap;
 /*
 This class keeps track of:
     Board state
@@ -14,105 +14,100 @@ TODO(?):
 */
 
 public class Board {
-    public Square[][] Squares = new Square[8][8];
+    Map<Integer, Square> Squares = new HashMap<Integer, Square>();
         
     public Board() { 
         this.newBoard();
-        this.printBoard(false);
     }
     
             
-    //puts a square in each spot in the array with the correct color and rank and file.
-    //add pieces to the board somewhere else me thinks?
-    private void newBoard() {  
-    /* 
-        Starting from top left (white square) fill the board with squares and
-        set their rankfile (a-h)x(1-8) according to 
-        https://en.wikipedia.org/wiki/Rules_of_chess 
-        
-        0,0     1,0     2,0     3,0     4,0     5,0     6,0     7,0      
-    
-        0,1     1,1     2,1     3,1     4,1     5,1     6,1     7,1      
-    
-        0,2     1,2     2,2     3,2     4,2     5,2     6,2     7,2      
-    
-        0,3     1,3     2,3     3,3     4,3     5,3     6,3     7,3      
-    
-        0,4     1,4     2,4     3,4     4,4     5,4     6,4     7,4      
-    
-        0,5     1,5     2,5     3,5     4,5     5,5     6,5     7,5      
-    
-        0,6     1,6     2,6     3,6     4,6     5,6     6,6     7,6      
-    
-        0,7     1,7     2,7     3,7     4,7     5,7     6,7     7,7 
-
+    /*
+    Map.entry("a8", 0), Map.entry("b8", 1), Map.entry("c8", 2), Map.entry("d8", 3), Map.entry("e8", 4), Map.entry("f8", 5), Map.entry("g8", 6), Map.entry("h8", 7),
+    Map.entry("a7", 16), Map.entry("b7", 17), Map.entry("c7", 18), Map.entry("d7", 19), Map.entry("e7", 20), Map.entry("f7", 21), Map.entry("g7", 22), Map.entry("h7", 23),
+    Map.entry("a6", 32), Map.entry("b6", 33), Map.entry("c6", 34), Map.entry("d6", 35), Map.entry("e6", 36), Map.entry("f6", 37), Map.entry("g6", 38), Map.entry("h6", 39),
+    Map.entry("a5", 48), Map.entry("b5", 49), Map.entry("c5", 50), Map.entry("d5", 51), Map.entry("e5", 52), Map.entry("f5", 53), Map.entry("g5", 54), Map.entry("h5", 55),
+    Map.entry("a4", 64), Map.entry("b4", 65), Map.entry("c4", 66), Map.entry("d4", 67), Map.entry("e4", 68), Map.entry("f4", 69), Map.entry("g4", 70), Map.entry("h4", 71),
+    Map.entry("a3", 80), Map.entry("b3", 81), Map.entry("c3", 82), Map.entry("d3", 83), Map.entry("e3", 84), Map.entry("f3", 85), Map.entry("g3", 86), Map.entry("h3", 87),
+    Map.entry("a2", 96), Map.entry("b2", 97), Map.entry("c2", 98), Map.entry("d2", 99), Map.entry("e2", 100), Map.entry("f2", 101), Map.entry("g2", 102), Map.entry("h2", 103),
+    Map.entry("a1", 112), Map.entry("b1", 113), Map.entry("c1", 114), Map.entry("d1", 115), Map.entry("e1", 116), Map.entry("f1", 117), Map.entry("g1", 118), Map.entry("h1", 119)
     */
-        
-        String squareColor = "W";
-        int rank = 8;
-        String file = "a";
 
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                this.Squares[i][j] = new Square(squareColor, (file + Integer.toString(rank)), new Piece());
-                squareColor = swapSquareColor(squareColor);
-                rank--;
-            }
-            squareColor = swapSquareColor(squareColor); //have to swap twice before each column
-            rank = 8;
-            
-            switch (file) {
-                case "a":   file = "b";
-                            break;
-                case "b":   file = "c";
-                            break;
-                case "c":   file = "d";
-                            break;
-                case "d":   file = "e";
-                            break;
-                case "e":   file = "f";
-                            break;
-                case "f":   file = "g";
-                            break;
-                case "g":   file = "h";
-                            break;
-                case "h":   file = "a";
-                            break;
-                default:    System.out.println("o shit waddup, its dat default. (newBoard switch)");
-            }
-        }
+    //Populates the board with everything in the right place
+    private void newBoard() {  
+        Squares.put(0, new Square("W", "a8", new Piece("ROOK", "B")));     //black back row
+        Squares.put(1, new Square("B", "b8", new Piece("KNIGHT", "B")));
+        Squares.put(2, new Square("W", "c8", new Piece("BISHOP_WHITE", "B")));
+        Squares.put(3, new Square("B", "d8", new Piece("QUEEN", "B")));
+        Squares.put(4, new Square("W", "e8", new Piece("KING", "B")));
+        Squares.put(5, new Square("B", "f8", new Piece("BISHOP_BLACK", "B")));
+        Squares.put(6, new Square("W", "g8", new Piece("KNIGHT", "B")));
+        Squares.put(7, new Square("B", "h8", new Piece("ROOK", "B")));     //black back row
+        Squares.put(16, new Square("B", "a7", new Piece("PAWN", "B")));    //black pawns
+        Squares.put(17, new Square("W", "b7", new Piece("PAWN", "B")));
+        Squares.put(18, new Square("B", "c7", new Piece("PAWN", "B")));
+        Squares.put(19, new Square("W", "d7", new Piece("PAWN", "B")));
+        Squares.put(20, new Square("B", "e7", new Piece("PAWN", "B")));
+        Squares.put(21, new Square("W", "f7", new Piece("PAWN", "B")));
+        Squares.put(22, new Square("B", "g7", new Piece("PAWN", "B")));
+        Squares.put(23, new Square("W", "h7", new Piece("PAWN", "B")));    //black pawns
+        Squares.put(32, new Square("W", "a6", new Piece()));
+        Squares.put(33, new Square("B", "b6", new Piece()));
+        Squares.put(34, new Square("W", "c6", new Piece()));
+        Squares.put(35, new Square("B", "d6", new Piece()));
+        Squares.put(36, new Square("W", "e6", new Piece()));
+        Squares.put(37, new Square("B", "f6", new Piece()));
+        Squares.put(38, new Square("W", "g6", new Piece()));
+        Squares.put(39, new Square("B", "h6", new Piece()));
+        Squares.put(48, new Square("B", "a5", new Piece()));
+        Squares.put(49, new Square("W", "b5", new Piece()));
+        Squares.put(50, new Square("B", "c5", new Piece()));
+        Squares.put(51, new Square("W", "d5", new Piece()));
+        Squares.put(52, new Square("B", "e5", new Piece()));
+        Squares.put(53, new Square("W", "f5", new Piece()));
+        Squares.put(54, new Square("B", "g5", new Piece()));
+        Squares.put(55, new Square("W", "h5", new Piece()));
+        Squares.put(64, new Square("W", "a4", new Piece()));
+        Squares.put(65, new Square("B", "b4", new Piece()));
+        Squares.put(66, new Square("W", "c4", new Piece()));
+        Squares.put(67, new Square("B", "d4", new Piece()));
+        Squares.put(68, new Square("W", "e4", new Piece()));
+        Squares.put(69, new Square("B", "f4", new Piece()));
+        Squares.put(70, new Square("W", "g4", new Piece()));
+        Squares.put(71, new Square("B", "h4", new Piece()));
+        Squares.put(80, new Square("B", "a3", new Piece()));
+        Squares.put(81, new Square("W", "b3", new Piece()));
+        Squares.put(82, new Square("B", "c3", new Piece()));
+        Squares.put(83, new Square("W", "d3", new Piece()));
+        Squares.put(84, new Square("B", "e3", new Piece()));
+        Squares.put(85, new Square("W", "f3", new Piece()));
+        Squares.put(86, new Square("B", "g3", new Piece()));
+        Squares.put(87, new Square("W", "h3", new Piece()));
+        Squares.put(96, new Square("W", "a2", new Piece("PAWN", "W")));      //white pawns
+        Squares.put(97, new Square("B", "b2", new Piece("PAWN", "W")));
+        Squares.put(98, new Square("W", "c2", new Piece("PAWN", "W")));
+        Squares.put(99, new Square("B", "d2", new Piece("PAWN", "W")));
+        Squares.put(100, new Square("W", "e2", new Piece("PAWN", "W")));
+        Squares.put(101, new Square("B", "f2", new Piece("PAWN", "W")));
+        Squares.put(102, new Square("W", "g2", new Piece("PAWN", "W")));
+        Squares.put(103, new Square("B", "h2", new Piece("PAWN", "W")));     //white pawns
+        Squares.put(112, new Square("B", "a1", new Piece("ROOK", "W")));   
+        Squares.put(113, new Square("W", "b1", new Piece("KNIGHT", "W")));
+        Squares.put(114, new Square("B", "c1", new Piece("BISHOP_BLACK", "W")));
+        Squares.put(115, new Square("W", "d1", new Piece("QUEEN", "W")));
+        Squares.put(116, new Square("B", "e1", new Piece("KING", "W")));
+        Squares.put(117, new Square("W", "f1", new Piece("BISHOP_WHITE", "W")));
+        Squares.put(118, new Square("B", "g1", new Piece("KNIGHT", "W")));
+        Squares.put(119, new Square("W", "h1", new Piece("ROOK", "W")));   //white back row
+        
+        this.printBoard();
     }
     
-    //prints out the board left to right top to bottom, either showing square
-    //colors (W or B) or with the rank and file
-    private void printBoard(boolean printColors) {
-        if (printColors) {
-            String rank = "";
-            for (int j = 0; j< 8; j++) {
-                for (int i = 0; i < 8; i++) {
-                    rank += (" " + this.Squares[i][j].color);
-                }
-                System.out.println(rank);
-                rank = "";
-            }
-        }
-        else {
-            String rank = "";
-            for (int j = 0; j< 8; j++) {
-                for (int i = 0; i < 8; i++) {
-                    rank += (" " + this.Squares[i][j].rankfile);
-                }
-                System.out.println(rank);
-                rank = "";
-            }
-        }
-    }
     
-    //swaps the square color
-    private String swapSquareColor(String color) {
-        if (color == "W") {
-            return "B";
+    //prints the board
+    public void printBoard() {
+        for (Map.Entry<Integer, Square> e : this.Squares.entrySet()) {
+            System.out.println(e.getValue().rankfile + " : " + e.getValue().piece.type + " : " + e.getValue().piece.color);
         }
-        else return "W";
+//        System.out.println(String.valueOf(this.Squares.get(0).piece.type.BISHOP_BLACK_MOVES[0]));
     }
 }

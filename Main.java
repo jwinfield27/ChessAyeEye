@@ -1,6 +1,5 @@
 package ChessAyeEye;
 
-
 public class Main {
 
     
