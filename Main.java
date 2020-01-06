@@ -2,10 +2,10 @@ package ChessAyeEye;
 
 public class Main {
 
-    
+
     public static void main(String[] args) {
         Board board = new Board();
-        System.out.println(System.getProperty("java.version"));
-        
-    } 
+        Controller controller = new Controller(board);
+
+    }
 }

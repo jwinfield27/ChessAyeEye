@@ -6,21 +6,21 @@ import java.util.HashMap;
 This class keeps track of:
     Board state
     setting up the board
-        
+
 TODO(?):
-    - probably has several utilities to determine: legal moves, check, draw, 
+    - probably has several utilities to determine: legal moves, check, draw,
     checkmate, ???
     - records the games? https://en.wikipedia.org/wiki/Chess_notation
 */
 
 public class Board {
     Map<Integer, Square> Squares = new HashMap<Integer, Square>();
-        
-    public Board() { 
+
+    public Board() {
         this.newBoard();
     }
-    
-            
+
+    //Now this is hot
     /*
     Map.entry("a8", 0), Map.entry("b8", 1), Map.entry("c8", 2), Map.entry("d8", 3), Map.entry("e8", 4), Map.entry("f8", 5), Map.entry("g8", 6), Map.entry("h8", 7),
     Map.entry("a7", 16), Map.entry("b7", 17), Map.entry("c7", 18), Map.entry("d7", 19), Map.entry("e7", 20), Map.entry("f7", 21), Map.entry("g7", 22), Map.entry("h7", 23),
@@ -33,7 +33,7 @@ public class Board {
     */
 
     //Populates the board with everything in the right place
-    private void newBoard() {  
+    private void newBoard() {
         Squares.put(0, new Square("W", "a8", new Piece("ROOK", "B")));     //black back row
         Squares.put(1, new Square("B", "b8", new Piece("KNIGHT", "B")));
         Squares.put(2, new Square("W", "c8", new Piece("BISHOP_WHITE", "B")));
@@ -90,7 +90,7 @@ public class Board {
         Squares.put(101, new Square("B", "f2", new Piece("PAWN", "W")));
         Squares.put(102, new Square("W", "g2", new Piece("PAWN", "W")));
         Squares.put(103, new Square("B", "h2", new Piece("PAWN", "W")));     //white pawns
-        Squares.put(112, new Square("B", "a1", new Piece("ROOK", "W")));   
+        Squares.put(112, new Square("B", "a1", new Piece("ROOK", "W")));
         Squares.put(113, new Square("W", "b1", new Piece("KNIGHT", "W")));
         Squares.put(114, new Square("B", "c1", new Piece("BISHOP_BLACK", "W")));
         Squares.put(115, new Square("W", "d1", new Piece("QUEEN", "W")));
@@ -98,15 +98,21 @@ public class Board {
         Squares.put(117, new Square("W", "f1", new Piece("BISHOP_WHITE", "W")));
         Squares.put(118, new Square("B", "g1", new Piece("KNIGHT", "W")));
         Squares.put(119, new Square("W", "h1", new Piece("ROOK", "W")));   //white back row
-        
-        this.printBoard();
+
+        //this.printBoard();
     }
-    
-    
+
+
     //prints the board
+    //TODO fix how board prints to make tracing moves easier on the eye and my brain :)
     public void printBoard() {
+        int mentalStabilityCount = 0;
         for (Map.Entry<Integer, Square> e : this.Squares.entrySet()) {
-            System.out.println(e.getValue().rankfile + " : " + e.getValue().piece.type + " : " + e.getValue().piece.color);
+          if (mentalStabilityCount%8 == 0){
+            System.out.println("\n");
+          }
+            System.out.print(e.getValue().rankfile + " : " + e.getValue().piece.type + " : " + e.getValue().piece.color + " | ");
+            mentalStabilityCount += 1;
         }
 //        System.out.println(String.valueOf(this.Squares.get(0).piece.type.BISHOP_BLACK_MOVES[0]));
     }
