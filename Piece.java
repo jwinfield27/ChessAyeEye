@@ -45,13 +45,19 @@ public class Piece {
     }
     
     public String color = "W";
-    public String name = "temp";
+    public String name = "NONE";
     Type type;
 
     public Piece(String piece, String color) {
         this.color = color;
         this.name = piece;
         this.type = Type.valueOf(piece);
+    }
+    
+    public Piece(String name, String type, String color) {
+        this.color = color;
+        this.name = name;
+        this.type = Type.valueOf(type);
     }
     
     public Piece() {
