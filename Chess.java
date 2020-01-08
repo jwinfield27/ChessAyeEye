@@ -22,7 +22,7 @@ import javax.imageio.ImageIO;
  *
  * @author nathan
  */
-public class Cheese extends javax.swing.JFrame {
+public class Chess extends javax.swing.JFrame {
 
     Board board = new Board();
     
@@ -38,33 +38,32 @@ public class Cheese extends javax.swing.JFrame {
     /**
      * Creates new form Cheese
      */
-    public Cheese() {
+    public Chess() {
         initComponents();
         
-        try { //should be platform agnostic
+        /*
+        Instead of images we could use a text field for each square on the 
+        chessboard which would make the icons look not dogshit, but 64 seperate
+        text fields seems cancerous
+        */
+        
+        try { //loads all our images so they can be displayed
+            //should be platform agnostic
             Path osPath = Paths.get(System.getProperty("user.dir") + File.separatorChar + Path.of("img"));
-            pieceIMG.put("PAWNW", ImageIO.read(new File(osPath.toString() + File.separatorChar + "PAWNW.png")));
-            pieceIMG.put("ROOKW",ImageIO.read(new File(osPath.toString() + File.separatorChar + "ROOKW.png")));
-            pieceIMG.put("KNIGHTW", ImageIO.read(new File(osPath.toString() + File.separatorChar + "KNIGHTW.png")));
-            pieceIMG.put("BISHOPW", ImageIO.read(new File(osPath.toString() + File.separatorChar + "BISHOPW.png")));
-            pieceIMG.put("QUEENW", ImageIO.read(new File(osPath.toString() + File.separatorChar + "QUEENW.png")));
-            pieceIMG.put("KINGW", ImageIO.read(new File(osPath.toString() + File.separatorChar + "KINGW.png")));
-            pieceIMG.put("PAWNB",ImageIO.read(new File(osPath.toString() + File.separatorChar + "PAWNB.png")));
-            pieceIMG.put("ROOKB", ImageIO.read(new File(osPath.toString() + File.separatorChar + "ROOKB.png")));
-            pieceIMG.put("KNIGHTB", ImageIO.read(new File(osPath.toString() + File.separatorChar + "KNIGHTB.png")));
-            pieceIMG.put("BISHOPB", ImageIO.read(new File(osPath.toString() + File.separatorChar + "BISHOPB.png")));
-            pieceIMG.put("QUEENB", ImageIO.read(new File(osPath.toString() + File.separatorChar + "QUEENB.png")));
-            pieceIMG.put("KINGB", ImageIO.read(new File(osPath.toString() + File.separatorChar + "KINGB.png")));
+            
+            File dir = new File(osPath.toString());
+            File[] images = dir.listFiles();
+            if (images != null) {
+                for (File f : images) {
+                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+                }
+            }
         } catch (IOException e) {
             System.out.println(e);
         }
         
-        
         this.PANEL_ORIGIN_X = 20;
         this.PANEL_ORIGIN_Y = this.getHeight()-(panelChessboard.getHeight()+20);
-        
-        
-        
     }
  
     @Override
@@ -115,10 +114,6 @@ public class Cheese extends javax.swing.JFrame {
         pieces.clear();
     }
     
-        
-    
-    
-    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -144,7 +139,7 @@ public class Cheese extends javax.swing.JFrame {
         panelChessboard.setForeground(new java.awt.Color(0, 0, 0));
         panelChessboard.setMaximumSize(new java.awt.Dimension(600, 600));
         panelChessboard.setMinimumSize(new java.awt.Dimension(600, 600));
-        panelChessboard.setName("panelChessboard");
+        panelChessboard.setName("panelChessboard"); // NOI18N
         panelChessboard.setPreferredSize(new java.awt.Dimension(600, 600));
         panelChessboard.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
             public void mouseMoved(java.awt.event.MouseEvent evt) {
@@ -225,20 +220,21 @@ public class Cheese extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Cheese.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Chess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Cheese.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Chess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Cheese.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Chess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Cheese.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Chess.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Cheese().setVisible(true);
+                new Chess().setVisible(true);
             }
         });
     }
@@ -272,7 +268,10 @@ public class Cheese extends javax.swing.JFrame {
         }
         return -1;
     }
-    
+    /*
+    This function takes a board.Squares key (id of a square) and returns the
+    upper left corner of that square as an x,y pair for drawing purposes
+    */
     private int[] squareToCoord(int s) {
         int x = (s%8) * SQUARE_SIZE;
         int y = 0;
