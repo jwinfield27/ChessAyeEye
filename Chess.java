@@ -24,7 +24,20 @@ import javax.imageio.ImageIO;
  */
 public class Chess extends javax.swing.JFrame {
 
-    Board board = new Board();
+    
+    /*
+    I think that this class should just be for interacting with the window and
+    that Controller should do everything that isnt drawing the board and pieces.
+    
+    This way the player and AI go back and forth editing the board and this
+    class can worry about the window and clicks etc.
+    
+    Im open to debate on this, idk if the separation is smart or if this makes
+    things more complicated?
+    */
+//    public Board board = new Board();
+    public Controller player;
+    public Controller AI;
     
     private final int SQUARE_SIZE = 75;
     
@@ -41,6 +54,9 @@ public class Chess extends javax.swing.JFrame {
     public Chess() {
         initComponents();
         
+        this.player = new Controller();
+        this.AI = new Controller(this.player.GAMEBOARD);
+        
         /*
         Instead of images we could use a text field for each square on the 
         chessboard which would make the icons look not dogshit, but 64 seperate
@@ -55,6 +71,7 @@ public class Chess extends javax.swing.JFrame {
             File[] images = dir.listFiles();
             if (images != null) {
                 for (File f : images) {
+                    System.out.println(f.getName());
                     pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
                 }
             }
@@ -79,7 +96,7 @@ public class Chess extends javax.swing.JFrame {
             int x = 0;
             int y = 0;
             int mentalStabilityCount = 0;
-            for (Map.Entry<Integer, Square> e : this.board.Squares.entrySet()) {
+            for (Map.Entry<Integer, Square> e : this.player.GAMEBOARD.Squares.entrySet()) {
                 if (e.getValue().color == "W") {
                     g.setColor(Color.WHITE);
                 }
@@ -108,8 +125,13 @@ public class Chess extends javax.swing.JFrame {
         Iterator it = pieces.iterator();
         while(it.hasNext()) {
             int key = (int)it.next();
-            Square s = this.board.Squares.get(key);
-            g.drawImage(pieceIMG.get(s.piece.name + s.piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
+            Square s = this.player.GAMEBOARD.Squares.get(key);
+//            if (key == this.player.getHeld()) {
+//                g.drawImage(pieceIMG.get(s.piece.name + s.piece.color), (this.mouseX - (this.SQUARE_SIZE/2)) + this.PANEL_ORIGIN_X, (this.mouseY - (this.SQUARE_SIZE/2)) + this.PANEL_ORIGIN_Y, this.rootPane);
+//            }
+//            else {
+                g.drawImage(pieceIMG.get(s.piece.name + s.piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
+//            }
         }
         pieces.clear();
     }
@@ -188,11 +210,15 @@ public class Chess extends javax.swing.JFrame {
     
     //when we click on the panel we can do things
     private void panelChessboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelChessboardMouseClicked
+        int squareKey = coordToSquare(this.mouseX, this.mouseY);
+//        Piece p = this.player.GAMEBOARD.Squares.get(squareKey).piece;
+//        System.out.println("Click at: " + this.player.GAMEBOARD.Squares.get(squareKey).rankfile + "\t|\tOn Piece: " + p.name + " (" + p.color + ")"); //type.toString());
         this.mouseX = evt.getX();
         this.mouseY = evt.getY();
-        int squareKey = coordToSquare(this.mouseX, this.mouseY);
-        Piece p = this.board.Squares.get(squareKey).piece;
-        System.out.println("Click at: " + this.board.Squares.get(squareKey).rankfile + "\t|\tOn Piece: " + p.name + " (" + p.color + ")"); //type.toString());
+        this.player.handleClick(squareKey);
+//        int squareKey = coordToSquare(this.mouseX, this.mouseY);
+//        Piece p = this.board.Squares.get(squareKey).piece;
+//        System.out.println("Click at: " + this.board.Squares.get(squareKey).rankfile + "\t|\tOn Piece: " + p.name + " (" + p.color + ")"); //type.toString());
         repaint(); //this calls the paint() function again
         
     }//GEN-LAST:event_panelChessboardMouseClicked
@@ -200,6 +226,8 @@ public class Chess extends javax.swing.JFrame {
     
     //Not used, maybe can be used to highlight possible moves?
     private void panelChessboardMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelChessboardMouseMoved
+        this.mouseX = evt.getX();
+        this.mouseY = evt.getY();
 //        System.out.println("(" + evt.getX() + ", " + evt.getY() + ")");
     }//GEN-LAST:event_panelChessboardMouseMoved
 
@@ -242,7 +270,7 @@ public class Chess extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel panelChessboard;
     // End of variables declaration//GEN-END:variables
-
+ 
     /*
     This function takes an x, y and returns the HashMap key for the square that
     was clicked on.
@@ -268,6 +296,7 @@ public class Chess extends javax.swing.JFrame {
         }
         return -1;
     }
+    
     /*
     This function takes a board.Squares key (id of a square) and returns the
     upper left corner of that square as an x,y pair for drawing purposes
@@ -304,5 +333,4 @@ public class Chess extends javax.swing.JFrame {
         int[] coord = {x, y};
         return coord;
     }
-
 }

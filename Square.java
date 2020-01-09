@@ -13,5 +13,5 @@ public class Square {
         this.color = color;
         this.rankfile = rankfile;
         this.piece = piece;
-    }
+    } 
 }
