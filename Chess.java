@@ -40,6 +40,7 @@ public class Chess extends javax.swing.JFrame {
     public Controller AI;
     
     private final int SQUARE_SIZE = 75;
+    private final String IMG_DIR = "/img";
     
     private Map<String, BufferedImage> pieceIMG = new HashMap<String, BufferedImage>();
     
@@ -64,39 +65,34 @@ public class Chess extends javax.swing.JFrame {
         */
         
         try { //loads all our images so they can be displayed
-            //should be platform agnostic
-//            Path osPath = Paths.get(System.getProperty("user.dir") + File.separatorChar + Path.of("img"));
-////            Path osPath = Paths.get("img");
-//            System.out.println(osPath.toString());
-//            
-//            File dir = new File("img");
-//            System.out.println(dir.toString());
-//            File[] images = dir.listFiles();
-//            if (images != null) {
-//                for (File f : images) {
-//                    System.out.println(f.getName());
-//                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
-//                }
-//            }
-//            File[] images = dir.listFiles();
-//            if (images != null) {
-//                for (File f : images) {
-//                    System.out.println(f.getName());
-//                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
-//                }
-//            }
-            pieceIMG.put("PAWNW", ImageIO.read(Chess.class.getResource("/img/PAWNW.png")));
-            pieceIMG.put("PAWNB", ImageIO.read(Chess.class.getResource("/img/PAWNB.png")));
-            pieceIMG.put("KINGW", ImageIO.read(Chess.class.getResource("/img/KINGW.png")));
-            pieceIMG.put("KINGB", ImageIO.read(Chess.class.getResource("/img/KINGB.png")));
-            pieceIMG.put("QUEENW", ImageIO.read(Chess.class.getResource("/img/QUEENW.png")));
-            pieceIMG.put("QUEENB", ImageIO.read(Chess.class.getResource("/img/QUEENB.png")));
-            pieceIMG.put("BISHOPW", ImageIO.read(Chess.class.getResource("/img/BISHOPW.png")));
-            pieceIMG.put("BISHOPB", ImageIO.read(Chess.class.getResource("/img/BISHOPB.png")));
-            pieceIMG.put("KNIGHTW", ImageIO.read(Chess.class.getResource("/img/KNIGHTW.png")));
-            pieceIMG.put("KNIGHTB", ImageIO.read(Chess.class.getResource("/img/KNIGHTB.png")));
-            pieceIMG.put("ROOKW", ImageIO.read(Chess.class.getResource("/img/ROOKW.png")));
-            pieceIMG.put("ROOKB", ImageIO.read(Chess.class.getResource("/img/ROOKB.png")));
+            
+            /*
+            MANUAL
+            LOADS FROM FOLDER 'img' IN THE SAM DIRECTORY AS CHESSAYEEYE.JAR
+            */
+                    
+//                    File dir = new File("img");
+//                    File[] images = dir.listFiles();
+//                    if (images != null) {
+//                        for (File f : images) {
+//                            pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+//                        }
+//                    }
+
+            /*
+            IDE
+            LOADS FROM RESOURCE FOLDER (resource folder at same level as 'java' in src
+            https://i.imgur.com/mFp8jCd.png
+            */
+
+                    String path = Chess.class.getResource("/img").getPath();
+                    File[] files = new File(path).listFiles();
+
+                    for (File f : files) {
+                        pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+                    } 
+            
+            
         } catch (IOException e) {
             System.out.println(e);
         }
