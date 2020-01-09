@@ -13,7 +13,7 @@ TODO(?):
     - records the games? https://en.wikipedia.org/wiki/Chess_notation
 */
 
-public class Board {
+public class Board{
     Map<Integer, Square> Squares = new HashMap<Integer, Square>();
 
     public Board() {
@@ -98,8 +98,6 @@ public class Board {
         Squares.put(117, new Square("W", "f1", new Piece("BISHOP", "BISHOP_WHITE", "W")));
         Squares.put(118, new Square("B", "g1", new Piece("KNIGHT", "W")));
         Squares.put(119, new Square("W", "h1", new Piece("ROOK", "W")));   //white back row
-
-        //this.printBoard();
     }
 
 
@@ -115,5 +113,9 @@ public class Board {
             mentalStabilityCount += 1;
         }
 //        System.out.println(String.valueOf(this.Squares.get(0).piece.type.BISHOP_BLACK_MOVES[0]));
+    }
+
+    public Board(Board board){
+      this.Squares = board.Squares;
     }
 }

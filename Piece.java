@@ -11,39 +11,62 @@ TODO(?):
 */
 
 public class Piece {
-    
+
     enum Type{
       PAWN, ROOK, KNIGHT, BISHOP_WHITE, BISHOP_BLACK, KING, QUEEN, NONE;
 
-    //THIS GOES WHERE
-    int[] PAWN_MOVES = {16,32};
-    int[] PAWN_ATTACKS = {15,17};
+    // '0' is to split moves and attacks for pawns
 
-    int[] ROOK_MOVES = {
+    static int[] PAWN_MOVES = {16,32,0,15,17};
+
+    static int[] ROOK_MOVES = {
         1,2,3,4,5,6,7,              //left right
         16,32,48,64,80,96,112};     //up down
 
 
-    int[] KNIGHT_MOVES = {14,31,33,18};
+    static int[] KNIGHT_MOVES = {14,31,33,18};
 
-    int[] BISHOP_WHITE_MOVES = {
+    static int[] BISHOP_WHITE_MOVES = {
         17,34,51,68,85,102,119,     //top left to bottom right
         15,30,45,60,75,90};         //inner top right to upper bottom left
 
-    int[] BISHOP_BLACK_MOVES = {
+    static int[] BISHOP_BLACK_MOVES = {
         15,30,45,60,75,90,105,      //top right to botton left
         17,34,51,68,85,102};        //inner top left to upper bottom right
 
-    int[] QUEEN_MOVES = {
+    static int[] QUEEN_MOVES = {
         1,2,3,4,5,6,7,              //left right
         16,32,48,64,80,96,112,      //up down
         15,30,45,60,75,90,105,      //black long diagonal
         17,34,51,68,85,102,119};    //white long diagonal
 
-    int[] KING_MOVES = {1,15,16,17};
-    int[] KING_CASTLE = {2};
+    //the move 2 case is a special case for something i dont understand
+    static int[] KING_MOVES = {1,2,15,16,17};
     }
-    
+
+    public int[] getMoveArray(Type type){
+      switch(type){
+        case PAWN:
+          return Type.PAWN_MOVES;
+        case ROOK:
+          return Type.ROOK_MOVES;
+        case KNIGHT:
+          return Type.KNIGHT_MOVES;
+        case BISHOP_WHITE:
+          return Type.BISHOP_WHITE_MOVES;
+        case BISHOP_BLACK:
+          return Type.BISHOP_BLACK_MOVES;
+        case KING:
+          return Type.KING_MOVES;
+        case QUEEN:
+          return Type.QUEEN_MOVES;
+      }
+      int[] dumbArray = {0};
+      return dumbArray;
+    }
+
+
+
     public String color = "W";
     public String name = "NONE";
     Type type;
@@ -53,18 +76,18 @@ public class Piece {
         this.name = piece;
         this.type = Type.valueOf(piece);
     }
-    
+
     public Piece(String name, String type, String color) {
         this.color = color;
         this.name = name;
         this.type = Type.valueOf(type);
     }
-    
+
     public Piece() {
         this.color = "NONE";
         this.name = "NONE";
         this.type = Type.valueOf("NONE");
     }
-    
+
 
 }
