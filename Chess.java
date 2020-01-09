@@ -18,13 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+
 /**
  *
  * @author nathan
  */
 public class Chess extends javax.swing.JFrame {
 
-    
     /*
     I think that this class should just be for interacting with the window and
     that Controller should do everything that isnt drawing the board and pieces.
@@ -65,16 +65,38 @@ public class Chess extends javax.swing.JFrame {
         
         try { //loads all our images so they can be displayed
             //should be platform agnostic
-            Path osPath = Paths.get(System.getProperty("user.dir") + File.separatorChar + Path.of("img"));
-            
-            File dir = new File(osPath.toString());
-            File[] images = dir.listFiles();
-            if (images != null) {
-                for (File f : images) {
-                    System.out.println(f.getName());
-                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
-                }
-            }
+//            Path osPath = Paths.get(System.getProperty("user.dir") + File.separatorChar + Path.of("img"));
+////            Path osPath = Paths.get("img");
+//            System.out.println(osPath.toString());
+//            
+//            File dir = new File("img");
+//            System.out.println(dir.toString());
+//            File[] images = dir.listFiles();
+//            if (images != null) {
+//                for (File f : images) {
+//                    System.out.println(f.getName());
+//                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+//                }
+//            }
+//            File[] images = dir.listFiles();
+//            if (images != null) {
+//                for (File f : images) {
+//                    System.out.println(f.getName());
+//                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+//                }
+//            }
+            pieceIMG.put("PAWNW", ImageIO.read(Chess.class.getResource("/img/PAWNW.png")));
+            pieceIMG.put("PAWNB", ImageIO.read(Chess.class.getResource("/img/PAWNB.png")));
+            pieceIMG.put("KINGW", ImageIO.read(Chess.class.getResource("/img/KINGW.png")));
+            pieceIMG.put("KINGB", ImageIO.read(Chess.class.getResource("/img/KINGB.png")));
+            pieceIMG.put("QUEENW", ImageIO.read(Chess.class.getResource("/img/QUEENW.png")));
+            pieceIMG.put("QUEENB", ImageIO.read(Chess.class.getResource("/img/QUEENB.png")));
+            pieceIMG.put("BISHOPW", ImageIO.read(Chess.class.getResource("/img/BISHOPW.png")));
+            pieceIMG.put("BISHOPB", ImageIO.read(Chess.class.getResource("/img/BISHOPB.png")));
+            pieceIMG.put("KNIGHTW", ImageIO.read(Chess.class.getResource("/img/KNIGHTW.png")));
+            pieceIMG.put("KNIGHTB", ImageIO.read(Chess.class.getResource("/img/KNIGHTB.png")));
+            pieceIMG.put("ROOKW", ImageIO.read(Chess.class.getResource("/img/ROOKW.png")));
+            pieceIMG.put("ROOKB", ImageIO.read(Chess.class.getResource("/img/ROOKB.png")));
         } catch (IOException e) {
             System.out.println(e);
         }
