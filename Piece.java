@@ -11,7 +11,6 @@ TODO(?):
 */
 
 public class Piece {
-    private int[] moves;
     enum Type{
       PAWN, ROOK, KNIGHT, BISHOP_WHITE, BISHOP_BLACK, KING, QUEEN, NONE;
 
@@ -71,6 +70,7 @@ public class Piece {
 
     public String color = "W";
     public String name = "NONE";
+    private int[] moves;
     Type type;
 
     public Piece(String piece, String color) {
