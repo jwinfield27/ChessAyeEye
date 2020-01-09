@@ -85,12 +85,25 @@ public class Chess extends javax.swing.JFrame {
             https://i.imgur.com/mFp8jCd.png
             */
 
-                    String path = Chess.class.getResource("/img").getPath();
-                    File[] files = new File(path).listFiles();
-
-                    for (File f : files) {
-                        pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
-                    } 
+//                    String path = Chess.class.getResource("/img").getPath();
+//                    File[] files = new File(path).listFiles();
+//
+//                    for (File f : files) {
+//                        pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+//                    } 
+                    
+            pieceIMG.put("PAWNW", ImageIO.read(Chess.class.getResource("/img/PAWNW.png")));
+            pieceIMG.put("PAWNB", ImageIO.read(Chess.class.getResource("/img/PAWNB.png")));
+            pieceIMG.put("KINGW", ImageIO.read(Chess.class.getResource("/img/KINGW.png")));
+            pieceIMG.put("KINGB", ImageIO.read(Chess.class.getResource("/img/KINGB.png")));
+            pieceIMG.put("QUEENW", ImageIO.read(Chess.class.getResource("/img/QUEENW.png")));
+            pieceIMG.put("QUEENB", ImageIO.read(Chess.class.getResource("/img/QUEENB.png")));
+            pieceIMG.put("BISHOPW", ImageIO.read(Chess.class.getResource("/img/BISHOPW.png")));
+            pieceIMG.put("BISHOPB", ImageIO.read(Chess.class.getResource("/img/BISHOPB.png")));
+            pieceIMG.put("KNIGHTW", ImageIO.read(Chess.class.getResource("/img/KNIGHTW.png")));
+            pieceIMG.put("KNIGHTB", ImageIO.read(Chess.class.getResource("/img/KNIGHTB.png")));
+            pieceIMG.put("ROOKW", ImageIO.read(Chess.class.getResource("/img/ROOKW.png")));
+            pieceIMG.put("ROOKB", ImageIO.read(Chess.class.getResource("/img/ROOKB.png")));
             
             
         } catch (IOException e) {
