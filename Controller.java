@@ -79,14 +79,14 @@ public class Controller {
     }
     
     private void movePiece(int leavingSquare, int destination) {
+        this.dropPiece();
         this.GAMEBOARD.Squares.get(destination).piece = this.GAMEBOARD.Squares.get(leavingSquare).piece;
         this.GAMEBOARD.Squares.get(leavingSquare).piece = new Piece(); //creates a new "NONE" piece
-        this.dropPiece();
     }
     
     private void capturePiece(int attackingSquare, int capturedSquare) {
+        this.dropPiece();
         this.GAMEBOARD.Squares.get(capturedSquare).piece = this.GAMEBOARD.Squares.get(attackingSquare).piece;
         this.GAMEBOARD.Squares.get(attackingSquare).piece = new Piece();
-        this.dropPiece();
     }
 }
