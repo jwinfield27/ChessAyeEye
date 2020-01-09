@@ -11,7 +11,7 @@ TODO(?):
 */
 
 public class Piece {
-    int[] moves;
+    private int[] moves;
     enum Type{
       PAWN, ROOK, KNIGHT, BISHOP_WHITE, BISHOP_BLACK, KING, QUEEN, NONE;
 
@@ -64,7 +64,9 @@ public class Piece {
       int[] dumbArray = {0};
       return dumbArray;
     }
-
+    public int[] getMoves(){
+      return moves;
+    }
 
 
     public String color = "W";
