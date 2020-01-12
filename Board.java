@@ -120,7 +120,7 @@ public class Board{
           if (mentalStabilityCount%8 == 0){
             System.out.println("\n");
           }
-            System.out.print(e.getValue().rankfile + " : " + e.getValue().piece.type + " : " + e.getValue().piece.color + " | ");
+            System.out.print(e.getValue().rankfile + " : " + e.getValue().Piece.type + " : " + e.getValue().Piece.color + " | ");
             mentalStabilityCount += 1;
         }
 //        System.out.println(String.valueOf(this.Squares.get(0).piece.type.BISHOP_BLACK_MOVES[0]));

@@ -47,7 +47,7 @@ public class Controller {
             }
 
             //If we click on an empty square
-            else if (this.GAMEBOARD.Squares.get(squareID).piece.name == "NONE") {
+            else if (this.GAMEBOARD.Squares.get(squareID).Piece.name == "NONE") {
 
                 //get distance to click
                 int distance = (squareID - this.heldPiece);
@@ -61,11 +61,11 @@ public class Controller {
             }
 
             //If we click on an occupied square
-            else if (this.GAMEBOARD.Squares.get(squareID).piece.name != "NONE") {
+            else if (this.GAMEBOARD.Squares.get(squareID).Piece.name != "NONE") {
 
                 //If we click on a piece of the same color do nothing
                 //Maybe this is where we could check for castling?
-                if (this.GAMEBOARD.Squares.get(squareID).piece.color == this.GAMEBOARD.Squares.get(this.heldPiece).piece.color) {
+                if (this.GAMEBOARD.Squares.get(squareID).Piece.color == this.GAMEBOARD.Squares.get(this.heldPiece).Piece.color) {
                     this.dropPiece();
                 }
 
@@ -85,7 +85,7 @@ public class Controller {
         }
 
         else {
-            if ((this.GAMEBOARD.Squares.get(squareID).piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).piece.color == this.color)) {
+            if ((this.GAMEBOARD.Squares.get(squareID).Piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).Piece.color == this.color)) {
                 this.heldPiece = squareID;
                 this.holdingPiece = true;
             }
@@ -97,35 +97,35 @@ public class Controller {
     }
 
     private void dropPiece() {
-        System.out.println("Droped Piece: " + this.GAMEBOARD.Squares.get(this.heldPiece).piece.name);
+        System.out.println("Droped Piece: " + this.GAMEBOARD.Squares.get(this.heldPiece).Piece.name);
         this.heldPiece = -1;
         this.holdingPiece = false;
     }
 
     private void movePiece(int leavingSquare, int destination) {
-        if (this.GAMEBOARD.Squares.get(leavingSquare).piece.onSpot) {this.GAMEBOARD.Squares.get(leavingSquare).piece.setMoved();}
+        if (this.GAMEBOARD.Squares.get(leavingSquare).Piece.onSpot) {this.GAMEBOARD.Squares.get(leavingSquare).Piece.setMoved();}
         
         //This is work around for AI vs Player movePiece so AI dont shit his pants
         if (this.holdingPiece) {this.dropPiece();}
         
-        this.GAMEBOARD.Squares.get(destination).piece = this.GAMEBOARD.Squares.get(leavingSquare).piece;
-        this.GAMEBOARD.Squares.get(leavingSquare).piece = new Piece(); //creates a new "NONE" piece
+        this.GAMEBOARD.Squares.get(destination).Piece = this.GAMEBOARD.Squares.get(leavingSquare).Piece;
+        this.GAMEBOARD.Squares.get(leavingSquare).Piece = new Piece(); //creates a new "NONE" piece
     }
     
     private void capturePiece(int attackingSquare, int capturedSquare) {
-        if (this.GAMEBOARD.Squares.get(this.heldPiece).piece.onSpot) {this.GAMEBOARD.Squares.get(this.heldPiece).piece.setMoved();}
+        if (this.GAMEBOARD.Squares.get(this.heldPiece).Piece.onSpot) {this.GAMEBOARD.Squares.get(this.heldPiece).Piece.setMoved();}
         
         //This is work around for AI vs Player movePiece so AI dont shit his pants
         if (this.holdingPiece) {this.dropPiece();} 
         
-        this.GAMEBOARD.Squares.get(capturedSquare).piece = this.GAMEBOARD.Squares.get(attackingSquare).piece;
-        this.GAMEBOARD.Squares.get(attackingSquare).piece = new Piece();
+        this.GAMEBOARD.Squares.get(capturedSquare).Piece = this.GAMEBOARD.Squares.get(attackingSquare).Piece;
+        this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
     }
 
     public void getLegalMoves(int squareID) {
         this.legalMoves.clear();
         
-        Piece p = this.GAMEBOARD.Squares.get(squareID).piece;
+        Piece p = this.GAMEBOARD.Squares.get(squareID).Piece;
         
         if (p.type == Piece.Type.PAWN) {
             
@@ -160,7 +160,7 @@ public class Controller {
                     continue;
                 }
                 
-                else if (this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") {
+                else if (this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") {
                     this.legalMoves.add(m);
                 }
             }
@@ -173,7 +173,7 @@ public class Controller {
                     continue;
                 }
                 
-                if ((this.GAMEBOARD.Squares.get(squareID + a).piece.type != Piece.Type.NONE) && (p.color != this.GAMEBOARD.Squares.get(squareID + a).piece.color)) {
+                if ((this.GAMEBOARD.Squares.get(squareID + a).Piece.type != Piece.Type.NONE) && (p.color != this.GAMEBOARD.Squares.get(squareID + a).Piece.color)) {
                     this.legalMoves.add(a);
                 }
             }
@@ -203,7 +203,7 @@ public class Controller {
                     continue;
                 }
                 
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).piece.color)) {
+                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }
@@ -226,7 +226,7 @@ public class Controller {
                 if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
                     continue;
                 }
-                else  if ((this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).piece.color)) {
+                else  if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }
@@ -248,7 +248,7 @@ public class Controller {
                     continue;
                 }
                 
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).piece.color)) {
+                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }
@@ -270,7 +270,7 @@ public class Controller {
                     continue;
                 }
                 
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).piece.color)) {
+                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }
@@ -292,7 +292,7 @@ public class Controller {
                     continue;
                 }
                 
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).piece.color)) {
+                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }
@@ -314,7 +314,7 @@ public class Controller {
                     continue;
                 }
                 
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).piece.color)) {
+                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }

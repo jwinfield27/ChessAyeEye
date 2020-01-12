@@ -1,4 +1,6 @@
-public class Player extends Controller{
+package ChessAyeEye;
+
+public class Player extends Controller {
 
   public Player(){
 

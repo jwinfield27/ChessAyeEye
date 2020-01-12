@@ -3,9 +3,10 @@ I'm not married to any of the work I've done, if you want to change the names of
 
 ##Thonks
 
+-Move Highlighting
+    - To get accurate move highlighting pick up and drop the piece then pick it up again, this should highlight the correct squares.
 
-- Should the Piece class know anything about its moves or just know *what* it is?
-    - *If* **Piece** *class is 'dumb' then our AI will be the one who knows each pieces legal moves which I think makes more sense?*
-
-- I think **Board** will also deal with setting up the pieces on the right **Square**s to begin.
-- The more I think about this right now I think **Board** shouldn't know many (any?) rules and just know how to set up and record moves. I think it makes sense that if we just tell our AI what the rules are they will play without breaking them... right?? I think **Board** does need to know about special things like check, checkmate, draw (stalemate?).
+-Controller
+    - squareID refers to the integer ID of the square that the piece we want is sitting on.
+    - leavingSquare and attackingSquare both refer to the square which has the piece that is doing the action.
+    - destination and capturedSquare both refer to the square which is having the action done to them (being captured, meing moved onto)

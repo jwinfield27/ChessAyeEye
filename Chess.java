@@ -163,7 +163,7 @@ public class Chess extends javax.swing.JFrame {
                 
                 bufferGraphics.fillRect(x + this.PANEL_ORIGIN_X, y + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
                 
-                if (e.getValue().piece.name != "NONE") {
+                if (e.getValue().Piece.name != "NONE") {
                     pieces.add(e.getKey());
                 }
                 
@@ -198,10 +198,10 @@ public class Chess extends javax.swing.JFrame {
             
             //if we holding a piece then we can have it float all cool like :D
             if (key == this.player.getHeld()) {
-                bufferGraphics.drawImage(pieceIMG.get(s.piece.name + s.piece.color), this.mouseX + this.PANEL_ORIGIN_X - (this.SQUARE_SIZE/2), this.mouseY + this.PANEL_ORIGIN_Y - (this.SQUARE_SIZE/2), this.rootPane); 
+                bufferGraphics.drawImage(pieceIMG.get(s.Piece.name + s.Piece.color), this.mouseX + this.PANEL_ORIGIN_X - (this.SQUARE_SIZE/2), this.mouseY + this.PANEL_ORIGIN_Y - (this.SQUARE_SIZE/2), this.rootPane); 
             }
             else {
-                bufferGraphics.drawImage(pieceIMG.get(s.piece.name + s.piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
+                bufferGraphics.drawImage(pieceIMG.get(s.Piece.name + s.Piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
             } 
         }
         pieces.clear();
