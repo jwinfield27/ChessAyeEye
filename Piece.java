@@ -68,9 +68,29 @@ public class Piece {
       return moves;
     }
 
+    private int getPieceValue(Type type){
+      switch(type){
+        case PAWN:
+          return 10;
+        case ROOK:
+          return 50;
+        case KNIGHT:
+          return 30;
+        case BISHOP_WHITE:
+          return 30;
+        case BISHOP_BLACK:
+          return 30;
+        case KING:
+          return 900;
+        case QUEEN:
+          return 90;
+    }
+    return 0;
+  }
 
     public String color = "W";
     public String name = "NONE";
+    public int value = 0;
     public int[] moves;
     Type type;
 
@@ -79,6 +99,7 @@ public class Piece {
         this.name = piece;
         this.type = Type.valueOf(piece);
         this.moves = getMoveArray(this.type);
+        this.value = getPieceValue(this.type);
     }
 
     public Piece(String name, String type, String color) {
@@ -86,6 +107,7 @@ public class Piece {
         this.name = name;
         this.type = Type.valueOf(type);
         this.moves = getMoveArray(this.type);
+        this.value = getPieceValue(this.type);
     }
 
     public Piece() {
@@ -93,5 +115,6 @@ public class Piece {
         this.name = "NONE";
         this.type = Type.valueOf("NONE");
         this.moves = getMoveArray(this.type);
+        this.value = getPieceValue(this.type);
     }
 }
