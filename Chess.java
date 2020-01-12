@@ -44,7 +44,7 @@ public class Chess extends javax.swing.JFrame {
     
     private final int BOARD_SIZE = 600;
     private final int SQUARE_SIZE = 75;
-    private final Color CYAN = new Color(100, 0, 255, 255); //argb
+    private final Color CYAN = new Color(0, 255, 255, 100); //rgba
     private final String IMG_DIR = "/img";
     
     private Map<String, BufferedImage> pieceIMG = new HashMap<String, BufferedImage>();
@@ -131,8 +131,6 @@ public class Chess extends javax.swing.JFrame {
         this.PANEL_ORIGIN_X = 20; //on my machine the horizontal size of the window appears to be 650 (panel+margins+10) for the window, 5 pixels on either side
         this.PANEL_ORIGIN_Y = this.rootPane.getParent().getSize().height - 620;
 //        this.PANEL_ORIGIN_Y = 73; //on my machine window height is 693p = 640 margins + 30 window title bar + 23 menu bar
-//        this.PANEL_ORIGIN_Y = 51;
-//        System.out.println(this.rootPane.getParent().getSize().height);
 
         buffer2 = createImage(this.rootPane.getWidth()+30, this.rootPane.getHeight()+30);
         bufferGraphics = buffer2.getGraphics();
@@ -177,7 +175,8 @@ public class Chess extends javax.swing.JFrame {
             }
         }
         
-        //Possible Moves (draw before pieces so peices are not covered by tint
+        //Legal moves for the piece being held
+        //***********************************************************************************************
         boolean draw = this.player.legalMoves.isEmpty();
         if (!draw) {
             Iterator pmoves = this.player.legalMoves.iterator();
@@ -188,7 +187,6 @@ public class Chess extends javax.swing.JFrame {
             }
         }
 
-        
         //Pieces
         //***********************************************************************************************
         Iterator it = pieces.iterator();

@@ -88,6 +88,7 @@ public class Controller {
             if ((this.GAMEBOARD.Squares.get(squareID).Piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).Piece.color == this.color)) {
                 this.heldPiece = squareID;
                 this.holdingPiece = true;
+                this.getLegalMoves(this.heldPiece);
             }
         }
     }
@@ -97,7 +98,7 @@ public class Controller {
     }
 
     private void dropPiece() {
-        System.out.println("Droped Piece: " + this.GAMEBOARD.Squares.get(this.heldPiece).Piece.name);
+//        System.out.println("Droped Piece: " + this.GAMEBOARD.Squares.get(this.heldPiece).Piece.name);
         this.heldPiece = -1;
         this.holdingPiece = false;
     }
@@ -209,112 +210,23 @@ public class Controller {
             }
         }
         
-        else if (p.type == Piece.Type.QUEEN) {
-            List<Integer> queenMoves = new ArrayList<Integer>(p.moves.length);
+        else {
+            List<Integer> pieceMoves = new ArrayList<Integer>();
             
             for (int i = 0; i < p.moves.length; i++) {
-                queenMoves.add(p.moves[i]);
-                queenMoves.add(p.moves[i] * -1);
-                System.out.println("Added (" + p.moves[i] + ", " + -p.moves[i] + ")");
+                pieceMoves.add(p.moves[i]);
+                pieceMoves.add(p.moves[i] * -1);
             }
 
-            Iterator itQueenMoves = queenMoves.iterator();
-            while(itQueenMoves.hasNext()) {
-                int m = (int)itQueenMoves.next();
+            Iterator itPieceMoves = pieceMoves.iterator();
+            while(itPieceMoves.hasNext()) {
+                int m = (int)itPieceMoves.next();
                
                 
                 if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
                     continue;
                 }
                 else  if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
-                    this.legalMoves.add(m);
-                }
-            }
-        }
-        
-        else if (p.type == Piece.Type.BISHOP_BLACK) {
-            List<Integer> bishopBlackMoves = new ArrayList<Integer>(p.moves.length);
-            
-            for (int i = 0; i < p.moves.length; i++) {
-                bishopBlackMoves.add(p.moves[i]);
-                bishopBlackMoves.add(p.moves[i] * -1);
-            }
-
-            Iterator itBishopBlackMoves = bishopBlackMoves.iterator();
-            while(itBishopBlackMoves.hasNext()) {
-                int m = (int)itBishopBlackMoves.next();
-                
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
-                }
-                
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
-                    this.legalMoves.add(m);
-                }
-            }
-        }
-        
-        else if (p.type == Piece.Type.BISHOP_WHITE) {
-            List<Integer> bishopWhiteMoves = new ArrayList<Integer>(p.moves.length);
-            
-            for (int i = 0; i < p.moves.length; i++) {
-                bishopWhiteMoves.add(p.moves[i]);
-                bishopWhiteMoves.add(p.moves[i] * -1);
-            }
-
-            Iterator itBishopWhiteMoves = bishopWhiteMoves.iterator();
-            while(itBishopWhiteMoves.hasNext()) {
-                int m = (int)itBishopWhiteMoves.next();
-                
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
-                }
-                
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
-                    this.legalMoves.add(m);
-                }
-            }
-        }
-        
-        else if (p.type == Piece.Type.ROOK) {
-            List<Integer> rookMoves = new ArrayList<Integer>(p.moves.length);
-            
-            for (int i = 0; i < p.moves.length; i++) {
-                rookMoves.add(p.moves[i]);
-                rookMoves.add(p.moves[i] * -1);
-            }
-
-            Iterator itRookMoves = rookMoves.iterator();
-            while(itRookMoves.hasNext()) {
-                int m = (int)itRookMoves.next();
-                
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
-                }
-                
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
-                    this.legalMoves.add(m);
-                }
-            }
-        }
-        
-        else if (p.type == Piece.Type.KNIGHT) {
-            List<Integer> knightMoves = new ArrayList<Integer>(p.moves.length);
-            
-            for (int i = 0; i < p.moves.length; i++) {
-                knightMoves.add(p.moves[i]);
-                knightMoves.add(p.moves[i] * -1);
-            }
-
-            Iterator itKnightMoves = knightMoves.iterator();
-            while(itKnightMoves.hasNext()) {
-                int m = (int)itKnightMoves.next();
-                
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
-                }
-                
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
                     this.legalMoves.add(m);
                 }
             }

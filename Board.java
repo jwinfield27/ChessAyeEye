@@ -17,6 +17,12 @@ TODO(?):
 
 public class Board{
     Map<Integer, Square> Squares = new HashMap<Integer, Square>();
+    
+    //FLAT_EARTH is used in Controller to let getLegalMoves know what squares 
+    //exist because we skip some numbers for example numbers 8-15 which can cause
+    //a problem when we have a piece on the edge of a board trying to move off the board, since 
+    //for example a rook at 80 moving left (-1) looking for square 79. 
+    //Name negotiable
     public List<Integer> FLAT_EARTH = List.of(
         0,1,2,3,4,5,6,7,
         16,17,18,19,20,21,22,23,
