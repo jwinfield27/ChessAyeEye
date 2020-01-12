@@ -44,6 +44,7 @@ public class Chess extends javax.swing.JFrame {
     
     private final int BOARD_SIZE = 600;
     private final int SQUARE_SIZE = 75;
+    private final Color CYAN = new Color(100, 0, 255, 255); //argb
     private final String IMG_DIR = "/img";
     
     private Map<String, BufferedImage> pieceIMG = new HashMap<String, BufferedImage>();
@@ -175,6 +176,18 @@ public class Chess extends javax.swing.JFrame {
                 }
             }
         }
+        
+        //Possible Moves (draw before pieces so peices are not covered by tint
+        boolean draw = this.player.legalMoves.isEmpty();
+        if (!draw) {
+            Iterator pmoves = this.player.legalMoves.iterator();
+            while(pmoves.hasNext()) {
+                bufferGraphics.setColor(this.CYAN);
+                int[] point = squareToCoord(this.player.getHeld() + (int)pmoves.next());
+                bufferGraphics.fillRect(point[0] + this.PANEL_ORIGIN_X, point[1] + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
+            }
+        }
+
         
         //Pieces
         //***********************************************************************************************
