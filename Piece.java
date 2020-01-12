@@ -14,7 +14,7 @@ public class Piece {
     enum Type{
       PAWN, ROOK, KNIGHT, BISHOP_WHITE, BISHOP_BLACK, KING, QUEEN, NONE;
 
-    // '0' is to split moves and attacks for pawns
+    // '0' is to split moves and attacks for pawns kidna doodoo but it will work for now
 
     private static int[] PAWN_MOVES = {16,32,0,15,17};
 
