@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Controller {
-    public Board GAMEBOARD; //this is THE board that is actually being played on.
-
+    public static Board GAMEBOARD; //this is THE board that is actually being played on.
+    public static Boolean whiteFirstTurn = True;
+    public static Boolean blackFirstTurn = True;
     public String color = "W";
 
     private int heldPiece = -1;
@@ -98,14 +99,14 @@ public class Controller {
         this.heldPiece = -1;
         this.holdingPiece = false;
     }
-    
-    private void movePiece(int leavingSquare, int destination) {
+
+    protected void movePiece(int leavingSquare, int destination) {
         this.dropPiece();
         this.GAMEBOARD.Squares.get(destination).piece = this.GAMEBOARD.Squares.get(leavingSquare).piece;
         this.GAMEBOARD.Squares.get(leavingSquare).piece = new Piece(); //creates a new "NONE" piece
     }
 
-    private void capturePiece(int attackingSquare, int capturedSquare) {
+    protected void capturePiece(int attackingSquare, int capturedSquare) {
         this.dropPiece();
         this.GAMEBOARD.Squares.get(capturedSquare).piece = this.GAMEBOARD.Squares.get(attackingSquare).piece;
         this.GAMEBOARD.Squares.get(attackingSquare).piece = new Piece();
