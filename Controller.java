@@ -9,18 +9,19 @@ import java.util.Map;
 import java.util.Set;
 
 public class Controller {
-    public Board GAMEBOARD; //this is THE board that is actually being played on.
-    
+    public static Board GAMEBOARD; //this is THE board that is actually being played on.
+    public static Boolean whiteFirstTurn = true; //why do we need these?
+    public static Boolean blackFirstTurn = true;
     public String color = "W";
-    
+
     private int heldPiece = -1;
     private boolean holdingPiece = false;
     public List<Integer> legalMoves = new ArrayList<>();
-    
+
     public Controller() {
         this.GAMEBOARD = new Board();
     }
-    
+
     public Controller(Board board){
         GAMEBOARD = board;
     }
@@ -39,26 +40,26 @@ public class Controller {
         if (this.holdingPiece) {
             this.getLegalMoves(this.heldPiece);
 //            System.out.println("HOLDING: " + this.heldPiece);
-            
+
             //If we click on the square where the piece started
             if (this.heldPiece == squareID) {
                 this.dropPiece();
             }
-            
+
             //If we click on an empty square
             else if (this.GAMEBOARD.Squares.get(squareID).piece.name == "NONE") {
-                
+
                 //get distance to click
                 int distance = (squareID - this.heldPiece);
                 
                 //if the distance is in the move list then it can move
                 for (int element : this.legalMoves) {
-                    if (element == distance) {      
+                    if (element == distance) {
                         this.movePiece(this.heldPiece, squareID);
                     }
                 }
             }
-            
+
             //If we click on an occupied square
             else if (this.GAMEBOARD.Squares.get(squareID).piece.name != "NONE") {
 
@@ -67,7 +68,7 @@ public class Controller {
                 if (this.GAMEBOARD.Squares.get(squareID).piece.color == this.GAMEBOARD.Squares.get(this.heldPiece).piece.color) {
                     this.dropPiece();
                 }
-                
+
                 //if we are holding a piece and click on an enemy piece
                 else {
                     //get distance to click
@@ -82,7 +83,7 @@ public class Controller {
                 }
             }
         }
-        
+
         else {
             if ((this.GAMEBOARD.Squares.get(squareID).piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).piece.color == this.color)) {
                 this.heldPiece = squareID;
@@ -94,13 +95,13 @@ public class Controller {
     public int getHeld() {
         return this.heldPiece;
     }
-    
+
     private void dropPiece() {
         System.out.println("Droped Piece: " + this.GAMEBOARD.Squares.get(this.heldPiece).piece.name);
         this.heldPiece = -1;
         this.holdingPiece = false;
     }
-    
+
     private void movePiece(int leavingSquare, int destination) {
         if (this.GAMEBOARD.Squares.get(leavingSquare).piece.onSpot) {this.GAMEBOARD.Squares.get(leavingSquare).piece.setMoved();}
         

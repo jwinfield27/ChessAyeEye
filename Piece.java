@@ -17,31 +17,31 @@ public class Piece {
     // '0' is to split moves and attacks for pawns
     //added '0' to every piece's moves so we can write generic code
 
-    private static int[] PAWN_MOVES = {16,32,0,15,17};
+    private final static int[] PAWN_MOVES = {16,32,0,15,17};
 
-    private static int[] ROOK_MOVES = {
+    private final static int[] ROOK_MOVES = {
         1,2,3,4,5,6,7,              //left right
         16,32,48,64,80,96,112};     //up down
 
+    private final static int[] KNIGHT_MOVES = {14,31,33,18};
 
-    private static int[] KNIGHT_MOVES = {14,31,33,18};
-
-    private static int[] BISHOP_WHITE_MOVES = {
+    private final static int[] BISHOP_WHITE_MOVES = {
         17,34,51,68,85,102,119,     //top left to bottom right
         15,30,45,60,75,90};         //inner top right to upper bottom left
 
-    private static int[] BISHOP_BLACK_MOVES = {
+    private final static int[] BISHOP_BLACK_MOVES = {
         15,30,45,60,75,90,105,      //top right to botton left
         17,34,51,68,85,102};        //inner top left to upper bottom right
 
-    private static int[] QUEEN_MOVES = {
+    private final static int[] QUEEN_MOVES = {
         1,2,3,4,5,6,7,              //left right
         16,32,48,64,80,96,112,      //up down
         15,30,45,60,75,90,105,      //black long diagonal
         17,34,51,68,85,102,119};    //white long diagonal
 
-    //the move 2 case is a special case for something i dont understand
-    private static int[] KING_MOVES = {1,15,16,17,2};
+    //the move 2 case is a special case for castling
+    private final static int[] KING_MOVES = {1,15,16,17,2};
+
     }
 
     private int[] getMoveArray(Type type){
@@ -68,9 +68,29 @@ public class Piece {
       return moves;
     }
 
+    private int getPieceValue(Type type){
+      switch(type){
+        case PAWN:
+          return 10;
+        case ROOK:
+          return 50;
+        case KNIGHT:
+          return 30;
+        case BISHOP_WHITE:
+          return 30;
+        case BISHOP_BLACK:
+          return 30;
+        case KING:
+          return 900;
+        case QUEEN:
+          return 90;
+    }
+    return 0;
+  }
 
     public String color = "W";
     public String name = "NONE";
+    public int value = 0;
     public int[] moves;
     public boolean onSpot = true;
     Type type;
@@ -80,6 +100,7 @@ public class Piece {
         this.name = piece;
         this.type = Type.valueOf(piece);
         this.moves = getMoveArray(this.type);
+        this.value = getPieceValue(this.type);
     }
 
     public Piece(String name, String type, String color) {
@@ -87,6 +108,7 @@ public class Piece {
         this.name = name;
         this.type = Type.valueOf(type);
         this.moves = getMoveArray(this.type);
+        this.value = getPieceValue(this.type);
     }
 
     public Piece() {
@@ -94,6 +116,7 @@ public class Piece {
         this.name = "NONE";
         this.type = Type.valueOf("NONE");
         this.moves = getMoveArray(this.type);
+        this.value = getPieceValue(this.type);
     }
     
     public void setMoved() {
