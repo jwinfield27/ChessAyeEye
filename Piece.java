@@ -12,35 +12,36 @@ TODO(?):
 
 public class Piece {
     enum Type{
-      PAWN, ROOK, KNIGHT, BISHOP_WHITE, BISHOP_BLACK, KING, QUEEN, NONE;
+        PAWN, ROOK, KNIGHT, BISHOP_WHITE, BISHOP_BLACK, KING, QUEEN, NONE;
 
-    // '0' is to split moves and attacks for pawns kidna doodoo but it will work for now
+    // '0' is to split moves and attacks for pawns
+    //added '0' to every piece's moves so we can write generic code
 
     private static int[] PAWN_MOVES = {16,32,0,15,17};
 
     private static int[] ROOK_MOVES = {
         1,2,3,4,5,6,7,              //left right
-        16,32,48,64,80,96,112};     //up down
+        16,32,48,64,80,96,112,0};     //up down
 
 
-    private static int[] KNIGHT_MOVES = {14,31,33,18};
+    private static int[] KNIGHT_MOVES = {14,31,33,18,0};
 
     private static int[] BISHOP_WHITE_MOVES = {
         17,34,51,68,85,102,119,     //top left to bottom right
-        15,30,45,60,75,90};         //inner top right to upper bottom left
+        15,30,45,60,75,90,0};         //inner top right to upper bottom left
 
     private static int[] BISHOP_BLACK_MOVES = {
         15,30,45,60,75,90,105,      //top right to botton left
-        17,34,51,68,85,102};        //inner top left to upper bottom right
+        17,34,51,68,85,102,0};        //inner top left to upper bottom right
 
     private static int[] QUEEN_MOVES = {
         1,2,3,4,5,6,7,              //left right
         16,32,48,64,80,96,112,      //up down
         15,30,45,60,75,90,105,      //black long diagonal
-        17,34,51,68,85,102,119};    //white long diagonal
+        17,34,51,68,85,102,119,0};    //white long diagonal
 
     //the move 2 case is a special case for something i dont understand
-    private static int[] KING_MOVES = {1,2,15,16,17};
+    private static int[] KING_MOVES = {1,2,15,16,17,0};
     }
 
     private int[] getMoveArray(Type type){
@@ -70,7 +71,7 @@ public class Piece {
 
     public String color = "W";
     public String name = "NONE";
-    private int[] moves;
+    public int[] moves;
     Type type;
 
     public Piece(String piece, String color) {
@@ -78,7 +79,6 @@ public class Piece {
         this.name = piece;
         this.type = Type.valueOf(piece);
         this.moves = getMoveArray(this.type);
-
     }
 
     public Piece(String name, String type, String color) {
@@ -94,6 +94,4 @@ public class Piece {
         this.type = Type.valueOf("NONE");
         this.moves = getMoveArray(this.type);
     }
-
-
 }

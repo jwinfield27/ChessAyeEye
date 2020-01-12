@@ -7,6 +7,8 @@ package ChessAyeEye;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -14,17 +16,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
+
 /**
  *
  * @author nathan
  */
 public class Chess extends javax.swing.JFrame {
 
-    
     /*
     I think that this class should just be for interacting with the window and
     that Controller should do everything that isnt drawing the board and pieces.
@@ -39,12 +42,17 @@ public class Chess extends javax.swing.JFrame {
     public Controller player;
     public Controller AI;
     
+    private final int BOARD_SIZE = 600;
     private final int SQUARE_SIZE = 75;
+    private final String IMG_DIR = "/img";
     
     private Map<String, BufferedImage> pieceIMG = new HashMap<String, BufferedImage>();
     
     int PANEL_ORIGIN_X;
     int PANEL_ORIGIN_Y;
+    
+    Graphics bufferGraphics;
+    Image buffer2;
     
     int mouseX = 0;
     int mouseY = 0;
@@ -64,29 +72,77 @@ public class Chess extends javax.swing.JFrame {
         */
         
         try { //loads all our images so they can be displayed
-            //should be platform agnostic
-            Path osPath = Paths.get(System.getProperty("user.dir") + File.separatorChar + Path.of("img"));
             
-            File dir = new File(osPath.toString());
-            File[] images = dir.listFiles();
-            if (images != null) {
-                for (File f : images) {
-                    System.out.println(f.getName());
-                    pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
-                }
-            }
+            /*
+            MANUAL
+            LOADS FROM FOLDER 'img' IN THE SAM DIRECTORY AS CHESSAYEEYE.JAR
+            */
+                    
+//                    File dir = new File("img");
+//                    File[] images = dir.listFiles();
+//                    if (images != null) {
+//                        for (File f : images) {
+//                            pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(f));
+//                        }
+//                    }
+
+            /*
+            IDE
+            LOADS FROM RESOURCE FOLDER (resource folder at same level as 'java' in src
+            https://i.imgur.com/mFp8jCd.png
+            */
+
+//                    String path = Chess.class.getResource(IMG_DIR).getPath();
+//                    File[] files = new File(path).listFiles();
+//
+//                    for (File f : files) {
+//                        File temp = new File(Chess.class.getResource(IMG_DIR + File.separatorChar + f.getName()).toString());
+//                        System.out.println(temp.toString());
+//                        pieceIMG.put(f.getName().replace(".png", ""), ImageIO.read(temp));
+//                    } 
+                    
+            pieceIMG.put("PAWNW", ImageIO.read(Chess.class.getResource("/img/PAWNW.png")));
+            pieceIMG.put("PAWNB", ImageIO.read(Chess.class.getResource("/img/PAWNB.png")));
+            pieceIMG.put("KINGW", ImageIO.read(Chess.class.getResource("/img/KINGW.png")));
+            pieceIMG.put("KINGB", ImageIO.read(Chess.class.getResource("/img/KINGB.png")));
+            pieceIMG.put("QUEENW", ImageIO.read(Chess.class.getResource("/img/QUEENW.png")));
+            pieceIMG.put("QUEENB", ImageIO.read(Chess.class.getResource("/img/QUEENB.png")));
+            pieceIMG.put("BISHOPW", ImageIO.read(Chess.class.getResource("/img/BISHOPW.png")));
+            pieceIMG.put("BISHOPB", ImageIO.read(Chess.class.getResource("/img/BISHOPB.png")));
+            pieceIMG.put("KNIGHTW", ImageIO.read(Chess.class.getResource("/img/KNIGHTW.png")));
+            pieceIMG.put("KNIGHTB", ImageIO.read(Chess.class.getResource("/img/KNIGHTB.png"))); 
+            pieceIMG.put("ROOKW", ImageIO.read(Chess.class.getResource("/img/ROOKW.png")));
+            pieceIMG.put("ROOKB", ImageIO.read(Chess.class.getResource("/img/ROOKB.png")));
+            
+            
         } catch (IOException e) {
             System.out.println(e);
         }
         
-        this.PANEL_ORIGIN_X = 20;
-        this.PANEL_ORIGIN_Y = this.getHeight()-(panelChessboard.getHeight()+20);
+        
+        /*
+        This needs changed to work for any os unless by some miracle its perfect for your machine too. 
+        the rootPane.getParent().getSize() seems to be the host OS window including the window title bar
+        but just how much of the Frame/ top margin is eaten up by the window bar is impossible to calculate
+        and shall forever remain an enigma
+        */
+
+        this.PANEL_ORIGIN_X = 20; //on my machine the horizontal size of the window appears to be 650 (panel+margins+10) for the window, 5 pixels on either side
+        this.PANEL_ORIGIN_Y = this.rootPane.getParent().getSize().height - 620;
+//        this.PANEL_ORIGIN_Y = 73; //on my machine window height is 693p = 640 margins + 30 window title bar + 23 menu bar
+//        this.PANEL_ORIGIN_Y = 51;
+//        System.out.println(this.rootPane.getParent().getSize().height);
+
+        buffer2 = createImage(this.rootPane.getWidth()+30, this.rootPane.getHeight()+30);
+        bufferGraphics = buffer2.getGraphics();
     }
  
     @Override
     public void paint(Graphics g) {
-        super.paintComponents(g);
+        super.paintComponents(bufferGraphics);
         
+        bufferGraphics.clearRect(this.PANEL_ORIGIN_X,this.PANEL_ORIGIN_Y,this.BOARD_SIZE,this.BOARD_SIZE);
+      
         List<Integer> pieces = new ArrayList<Integer>();
         
         //Board
@@ -98,13 +154,13 @@ public class Chess extends javax.swing.JFrame {
             int mentalStabilityCount = 0;
             for (Map.Entry<Integer, Square> e : this.player.GAMEBOARD.Squares.entrySet()) {
                 if (e.getValue().color == "W") {
-                    g.setColor(Color.WHITE);
+                    bufferGraphics.setColor(Color.WHITE);
                 }
                 else {
-                    g.setColor(Color.GRAY);
+                    bufferGraphics.setColor(Color.GRAY);
                 }
                 
-                g.fillRect(x + this.PANEL_ORIGIN_X, y + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
+                bufferGraphics.fillRect(x + this.PANEL_ORIGIN_X, y + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
                 
                 if (e.getValue().piece.name != "NONE") {
                     pieces.add(e.getKey());
@@ -126,14 +182,22 @@ public class Chess extends javax.swing.JFrame {
         while(it.hasNext()) {
             int key = (int)it.next();
             Square s = this.player.GAMEBOARD.Squares.get(key);
-//            if (key == this.player.getHeld()) {
-//                g.drawImage(pieceIMG.get(s.piece.name + s.piece.color), (this.mouseX - (this.SQUARE_SIZE/2)) + this.PANEL_ORIGIN_X, (this.mouseY - (this.SQUARE_SIZE/2)) + this.PANEL_ORIGIN_Y, this.rootPane);
-//            }
-//            else {
-                g.drawImage(pieceIMG.get(s.piece.name + s.piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
-//            }
+            
+            //if we holding a piece then we can have it float all cool like :D
+            if (key == this.player.getHeld()) {
+                bufferGraphics.drawImage(pieceIMG.get(s.piece.name + s.piece.color), this.mouseX + this.PANEL_ORIGIN_X - (this.SQUARE_SIZE/2), this.mouseY + this.PANEL_ORIGIN_Y - (this.SQUARE_SIZE/2), this.rootPane); 
+            }
+            else {
+                bufferGraphics.drawImage(pieceIMG.get(s.piece.name + s.piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
+            } 
         }
         pieces.clear();
+        g.drawImage(buffer2, 0, 0, this.rootPane);
+    }
+    
+    @Override
+    public void update(Graphics g) {
+        paint(g);
     }
     
     /**
@@ -146,13 +210,17 @@ public class Chess extends javax.swing.JFrame {
     private void initComponents() {
 
         panelChessboard = new javax.swing.JPanel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        menuFileNewGame = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("ChessAyeEye");
         setBackground(new java.awt.Color(0, 0, 0));
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
         setForeground(java.awt.Color.black);
-        setMaximumSize(new java.awt.Dimension(640, 640));
+        setMaximumSize(new java.awt.Dimension(1000, 1000));
         setMinimumSize(new java.awt.Dimension(640, 640));
         setName("ChessAyeEye"); // NOI18N
         setResizable(false);
@@ -185,6 +253,21 @@ public class Chess extends javax.swing.JFrame {
             .addGap(0, 600, Short.MAX_VALUE)
         );
 
+        jMenu1.setText("File");
+
+        menuFileNewGame.setText("New Game");
+        menuFileNewGame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuFileNewGameActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuFileNewGame);
+
+        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -211,26 +294,24 @@ public class Chess extends javax.swing.JFrame {
     //when we click on the panel we can do things
     private void panelChessboardMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelChessboardMouseClicked
         int squareKey = coordToSquare(this.mouseX, this.mouseY);
-//        Piece p = this.player.GAMEBOARD.Squares.get(squareKey).piece;
-//        System.out.println("Click at: " + this.player.GAMEBOARD.Squares.get(squareKey).rankfile + "\t|\tOn Piece: " + p.name + " (" + p.color + ")"); //type.toString());
         this.mouseX = evt.getX();
         this.mouseY = evt.getY();
         this.player.handleClick(squareKey);
-//        int squareKey = coordToSquare(this.mouseX, this.mouseY);
-//        Piece p = this.board.Squares.get(squareKey).piece;
-//        System.out.println("Click at: " + this.board.Squares.get(squareKey).rankfile + "\t|\tOn Piece: " + p.name + " (" + p.color + ")"); //type.toString());
         repaint(); //this calls the paint() function again
         
     }//GEN-LAST:event_panelChessboardMouseClicked
 
-    
-    //Not used, maybe can be used to highlight possible moves?
+    private void menuFileNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFileNewGameActionPerformed
+        newGame();
+    }//GEN-LAST:event_menuFileNewGameActionPerformed
+
     private void panelChessboardMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelChessboardMouseMoved
         this.mouseX = evt.getX();
         this.mouseY = evt.getY();
-//        System.out.println("(" + evt.getX() + ", " + evt.getY() + ")");
+        repaint();
     }//GEN-LAST:event_panelChessboardMouseMoved
 
+    
     /**
      * @param args the command line arguments
      */
@@ -268,6 +349,10 @@ public class Chess extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem menuFileNewGame;
     private javax.swing.JPanel panelChessboard;
     // End of variables declaration//GEN-END:variables
  
@@ -332,5 +417,11 @@ public class Chess extends javax.swing.JFrame {
         
         int[] coord = {x, y};
         return coord;
+    }
+
+    private void newGame() {
+        this.player = new Controller();
+        this.AI = new Controller(this.player.GAMEBOARD);
+        repaint();
     }
 }

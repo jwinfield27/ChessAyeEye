@@ -1,7 +1,9 @@
 package ChessAyeEye;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class Controller {
     public Board GAMEBOARD; //this is THE board that is actually being played on.
@@ -39,9 +41,19 @@ public class Controller {
                 this.dropPiece();
             }
             
-            //If we click on an empty square just move it there
+            //If we click on an empty square
             else if (this.GAMEBOARD.Squares.get(squareID).piece.name == "NONE") {
-                this.movePiece(this.heldPiece, squareID);
+                
+                //get distance to click
+                int distance = Math.abs(this.heldPiece - squareID);
+                int[] moves = this.GAMEBOARD.Squares.get(this.heldPiece).piece.moves;
+                
+                //if the distance is in the move list then it can move
+                for (int element : this.GAMEBOARD.Squares.get(this.heldPiece).piece.moves) {
+                    if (element == distance) {      
+                        this.movePiece(this.heldPiece, squareID);
+                    }
+                }
             }
             
             //If we click on an occupied square
@@ -55,7 +67,16 @@ public class Controller {
                 
                 //if we are holding a piece and click on an enemy piece
                 else {
-                    this.capturePiece(this.heldPiece, squareID);
+                    //get distance to click
+                    int distance = Math.abs(this.heldPiece - squareID);
+                    int[] moves = this.GAMEBOARD.Squares.get(this.heldPiece).piece.moves;
+
+                    //if the distance is in the move list then it can move
+                    for (int element : this.GAMEBOARD.Squares.get(this.heldPiece).piece.moves) {
+                        if (element == distance) {      
+                            this.capturePiece(this.heldPiece, squareID);
+                        }
+                    }
                 }
             }
         }
