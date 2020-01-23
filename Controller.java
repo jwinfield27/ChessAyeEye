@@ -200,11 +200,13 @@ public class Controller {
             
             for (int i = 0; i < p.moves.length; i++) {
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) &&
-                        this.GAMEBOARD.Squares.get(squareID + p.moves[i]).color != p.color) {
+                        (!this.GAMEBOARD.Squares.get(squareID + p.moves[i]).isOccupied() ||
+                        this.GAMEBOARD.Squares.get(squareID + p.moves[i]).color != p.color)) {
                     knightMoves.add(p.moves[i]);
                 }
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) &&
-                        this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).color != p.color) {
+                        (!this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).isOccupied() ||
+                        this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).color != p.color)) {
                     knightMoves.add(p.moves[i] * -1);
                 }
             }
