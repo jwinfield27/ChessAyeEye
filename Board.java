@@ -53,10 +53,10 @@ public class Board{
     private void newBoard() {
         Squares.put(0, new Square("W", "a8", new Piece("ROOK", "B")));     //black back row
         Squares.put(1, new Square("B", "b8", new Piece("KNIGHT", "B")));
-        Squares.put(2, new Square("W", "c8", new Piece("BISHOP", "BISHOP_WHITE", "B")));
+        Squares.put(2, new Square("W", "c8", new Piece("BISHOP", "B")));
         Squares.put(3, new Square("B", "d8", new Piece("QUEEN", "B")));
         Squares.put(4, new Square("W", "e8", new Piece("KING", "B")));
-        Squares.put(5, new Square("B", "f8", new Piece("BISHOP", "BISHOP_BLACK", "B")));
+        Squares.put(5, new Square("B", "f8", new Piece("BISHOP", "B")));
         Squares.put(6, new Square("W", "g8", new Piece("KNIGHT", "B")));
         Squares.put(7, new Square("B", "h8", new Piece("ROOK", "B")));     //black back row
         Squares.put(16, new Square("B", "a7", new Piece("PAWN", "B")));    //black pawns
@@ -109,10 +109,10 @@ public class Board{
         Squares.put(103, new Square("B", "h2", new Piece("PAWN", "W")));     //white pawns
         Squares.put(112, new Square("B", "a1", new Piece("ROOK", "W")));
         Squares.put(113, new Square("W", "b1", new Piece("KNIGHT", "W")));
-        Squares.put(114, new Square("B", "c1", new Piece("BISHOP", "BISHOP_BLACK", "W")));
+        Squares.put(114, new Square("B", "c1", new Piece("BISHOP", "W")));
         Squares.put(115, new Square("W", "d1", new Piece("QUEEN", "W")));
         Squares.put(116, new Square("B", "e1", new Piece("KING", "W")));
-        Squares.put(117, new Square("W", "f1", new Piece("BISHOP", "BISHOP_WHITE", "W")));
+        Squares.put(117, new Square("W", "f1", new Piece("BISHOP", "W")));
         Squares.put(118, new Square("B", "g1", new Piece("KNIGHT", "W")));
         Squares.put(119, new Square("W", "h1", new Piece("ROOK", "W")));   //white back row
     }

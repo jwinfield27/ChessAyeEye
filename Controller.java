@@ -39,7 +39,6 @@ public class Controller {
         //if we are holding a piece
         if (this.holdingPiece) {
             this.getLegalMoves(this.heldPiece);
-//            System.out.println("HOLDING: " + this.heldPiece);
 
             //If we click on the square where the piece started
             if (this.heldPiece == squareID) {
@@ -47,10 +46,11 @@ public class Controller {
             }
 
             //If we click on an empty square
-            else if (this.GAMEBOARD.Squares.get(squareID).Piece.name == "NONE") {
+            else if (!this.GAMEBOARD.Squares.get(squareID).isOccupied()) {
 
-                //get distance to click
+//                get distance to click
                 int distance = (squareID - this.heldPiece);
+                System.out.println("Distance: " + distance);
 
                 //if the distance is in the move list then it can move
                 for (int element : this.legalMoves) {
@@ -73,6 +73,7 @@ public class Controller {
                 else {
                     //get distance to click
                     int distance = (squareID - this.heldPiece);
+                    System.out.println("Distance: " + distance);
 
                     //if the distance is in the move list then it can move
                     for (int element : legalMoves) {
@@ -131,82 +132,87 @@ public class Controller {
         if (p.type == Piece.Type.PAWN) {
 
             int colorModifier = 1;
-
             switch (p.color) {
-                case "W":   colorModifier = -1;
-                            break;
-                case "B":   colorModifier = 1;
-                            break;
-                default:    System.out.println("Something fucky wucky Controller line ~130");
+                    case "W":   colorModifier = -1;
+                                            break;
+                    case "B":   colorModifier = 1;
+                                            break;
+                    default:    System.out.println("Something fucky wucky Controller line ~130");
             }
-
+            
             List<Integer> pawnMoves = new ArrayList<Integer>();
-            List<Integer> pawnAttacks = new ArrayList<Integer>();
-                pawnAttacks.add(p.moves[3] * colorModifier);
-                pawnAttacks.add(p.moves[4] * colorModifier);
-
-            if (p.onSpot) {
-                pawnMoves.add(p.moves[0] * colorModifier);
-                pawnMoves.add(p.moves[1] * colorModifier);
-            }
-            else {
+            
+            if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[0] * colorModifier)) && 
+                    !this.GAMEBOARD.Squares.get(squareID + (p.moves[0] * colorModifier)).isOccupied()) {
                 pawnMoves.add(p.moves[0] * colorModifier);
             }
-
+            if (p.onSpot && !this.GAMEBOARD.Squares.get(squareID + (p.moves[0] * colorModifier * 2)).isOccupied()) {
+                pawnMoves.add(p.moves[0] * (colorModifier * 2));
+            }
+            
+            int[] pawnAttacks = p.getPawnAttacks();
+            for (int i = 0; i < pawnAttacks.length; i++) {
+                int move = pawnAttacks[i] * colorModifier;
+                System.out.println(move);
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + move) && 
+                        (this.GAMEBOARD.Squares.get(squareID + move).isOccupied() && 
+                        this.GAMEBOARD.Squares.get(squareID + move).color != p.color)) {
+                    pawnMoves.add(pawnAttacks[i] * colorModifier);
+                }
+            }
+            
             Iterator itPawnMoves = pawnMoves.iterator();
             while(itPawnMoves.hasNext()) {
                 int m = (int)itPawnMoves.next();
-
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
-                }
-
-                else if (this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") {
-                    this.legalMoves.add(m);
-                }
-            }
-
-            Iterator itPawnAttacks = pawnAttacks.iterator();
-            while(itPawnAttacks.hasNext()) {
-                int a = (int)itPawnAttacks.next();
-
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + a)) {
-                    continue;
-                }
-
-                if ((this.GAMEBOARD.Squares.get(squareID + a).Piece.type != Piece.Type.NONE) && (p.color != this.GAMEBOARD.Squares.get(squareID + a).Piece.color)) {
-                    this.legalMoves.add(a);
-                }
+                this.legalMoves.add(m);
             }
         }
 
         else if (p.type == Piece.Type.KING) {
-            List<Integer> kingMoves = new ArrayList<Integer>(p.moves.length);
-
-            if (p.onSpot) {
-                for (int i = 0; i < p.moves.length; i++) {
+            List<Integer> kingMoves = new ArrayList<Integer>();
+            
+            for (int i = 0; i < p.moves.length; i++) {
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) &&
+                        (!this.GAMEBOARD.Squares.get(squareID + p.moves[i]).isOccupied() ||
+                            this.GAMEBOARD.Squares.get(squareID + p.moves[i]).color != p.color)) {
                     kingMoves.add(p.moves[i]);
+                }
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) &&
+                        (!this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).isOccupied() ||
+                            this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).color != p.color)) {
                     kingMoves.add(p.moves[i] * -1);
                 }
             }
-            else {
-                for (int i = 0; i < p.moves.length - 1; i++) {
-                    kingMoves.add(p.moves[i]);
-                    kingMoves.add(p.moves[i] * -1);
-                }
+            
+            if (p.onSpot) {
+                System.out.println("CONTROLLER::~180 \t | \t Haha, haven't written castling yet.");
             }
 
             Iterator itKingMoves = kingMoves.iterator();
             while(itKingMoves.hasNext()) {
                 int m = (int)itKingMoves.next();
-
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
+                this.legalMoves.add(m);
+            }
+        }
+        
+        else if (p.type == Piece.Type.KNIGHT) {
+            List<Integer> knightMoves = new ArrayList<Integer>();
+            
+            for (int i = 0; i < p.moves.length; i++) {
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) &&
+                        this.GAMEBOARD.Squares.get(squareID + p.moves[i]).color != p.color) {
+                    knightMoves.add(p.moves[i]);
                 }
-
-                else if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
-                    this.legalMoves.add(m);
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) &&
+                        this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).color != p.color) {
+                    knightMoves.add(p.moves[i] * -1);
                 }
+            }
+
+            Iterator itkNightMoves = knightMoves.iterator();
+            while(itkNightMoves.hasNext()) {
+                int m = (int)itkNightMoves.next();
+                this.legalMoves.add(m);
             }
         }
 
@@ -214,22 +220,52 @@ public class Controller {
             List<Integer> pieceMoves = new ArrayList<Integer>();
 
             for (int i = 0; i < p.moves.length; i++) {
-                pieceMoves.add(p.moves[i]);
-                pieceMoves.add(p.moves[i] * -1);
+                
+                int distance = p.moves[i];
+                int ogresHaveLayers = 1;
+                
+                while (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (distance * ogresHaveLayers))) {
+                    if (!this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers)).isOccupied()) {
+                        pieceMoves.add(distance * ogresHaveLayers);
+                    }
+                    else if (this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers)).color != p.color) {
+                        pieceMoves.add(distance * ogresHaveLayers);
+                        break;
+                    }
+                    else {
+                        break;
+                    }
+                    ogresHaveLayers += 1;
+                }
+                
+                ogresHaveLayers = 1;
+                
+                while (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (distance * ogresHaveLayers * -1))) {
+                    if (!this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers * -1)).isOccupied()) {
+                        pieceMoves.add(distance * ogresHaveLayers * -1);
+                    }
+                    else if (this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers * -1)).color != p.color) {
+                        pieceMoves.add(distance * ogresHaveLayers * -1);
+                        break;
+                    }
+                    else {
+                        break;
+                    }
+                    ogresHaveLayers += 1;
+                }
             }
 
             Iterator itPieceMoves = pieceMoves.iterator();
             while(itPieceMoves.hasNext()) {
                 int m = (int)itPieceMoves.next();
-
-
-                if (!this.GAMEBOARD.FLAT_EARTH.contains(squareID + m)) {
-                    continue;
-                }
-                else  if ((this.GAMEBOARD.Squares.get(squareID + m).Piece.name == "NONE") || (p.color != this.GAMEBOARD.Squares.get(squareID + m).Piece.color)) {
-                    this.legalMoves.add(m);
-                }
+                this.legalMoves.add(m);
             }
+        }
+        
+        Iterator DEBUGMOVES = this.legalMoves.iterator();
+        System.out.println("MOVES FOR: " + this.heldPiece);
+        while (DEBUGMOVES.hasNext()) {
+            System.out.println((int)DEBUGMOVES.next());
         }
     }
 
@@ -238,5 +274,7 @@ public class Controller {
       movePiece(squareID,legalMoves.get(legalMoves.size()-1)+squareID);
       return (squareID + legalMoves.get(legalMoves.size()-1));
     }
-
+//                for (int i = 0; i < p.moves.length; i++) {
+//                    
+//                }
 }

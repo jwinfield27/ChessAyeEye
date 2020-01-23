@@ -14,4 +14,12 @@ public class Square {
         this.rankfile = rankfile;
         this.Piece = piece;
     } 
+    
+    
+    public boolean isOccupied() {
+        if (this.Piece.name != "NONE") {
+            return true;
+        }
+        else return false;
+    }
 }

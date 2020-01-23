@@ -24,6 +24,6 @@ public class AI extends Controller{
 //gives the point evaluation of the board to hopefully minimize the possible damage the enemy could do
 // to our army.
   private int damageReport(){
-
+      return 0;
   }
 }
