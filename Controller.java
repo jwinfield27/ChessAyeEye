@@ -50,7 +50,6 @@ public class Controller {
 
 //                get distance to click
                 int distance = (squareID - this.heldPiece);
-                System.out.println("Distance: " + distance);
 
                 //if the distance is in the move list then it can move
                 for (int element : this.legalMoves) {
@@ -73,7 +72,6 @@ public class Controller {
                 else {
                     //get distance to click
                     int distance = (squareID - this.heldPiece);
-                    System.out.println("Distance: " + distance);
 
                     //if the distance is in the move list then it can move
                     for (int element : legalMoves) {
@@ -97,9 +95,12 @@ public class Controller {
     public int getHeld() {
         return this.heldPiece;
     }
+    
+    public boolean isHolding() {
+        return this.holdingPiece;
+    }
 
     private void dropPiece() {
-//        System.out.println("Droped Piece: " + this.GAMEBOARD.Squares.get(this.heldPiece).Piece.name);
         this.heldPiece = -1;
         this.holdingPiece = false;
     }
@@ -126,6 +127,10 @@ public class Controller {
 
     public void getLegalMoves(int squareID) {
         this.legalMoves.clear();
+        
+        /*
+            PAWN -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+        */
 
         Piece p = this.GAMEBOARD.Squares.get(squareID).Piece;
 
@@ -146,6 +151,7 @@ public class Controller {
                     !this.GAMEBOARD.Squares.get(squareID + (p.moves[0] * colorModifier)).isOccupied()) {
                 pawnMoves.add(p.moves[0] * colorModifier);
             }
+            //Set an EnPassant square here, that the pawn can be captured one turn after
             if (p.onSpot && !this.GAMEBOARD.Squares.get(squareID + (p.moves[0] * colorModifier * 2)).isOccupied()) {
                 pawnMoves.add(p.moves[0] * (colorModifier * 2));
             }
@@ -166,7 +172,9 @@ public class Controller {
                 this.legalMoves.add(m);
             }
         }
-
+        /*
+            KING -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+        */
         else if (p.type == Piece.Type.KING) {
             List<Integer> kingMoves = new ArrayList<Integer>();
             
@@ -183,6 +191,10 @@ public class Controller {
                 }
             }
             
+            /*
+                check for legality of castling here.
+            */
+            
             if (p.onSpot) {
                 System.out.println("CONTROLLER::~180 \t | \t Haha, haven't written castling yet.");
             }
@@ -193,7 +205,9 @@ public class Controller {
                 this.legalMoves.add(m);
             }
         }
-        
+        /*
+            kNIGHT -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+        */
         else if (p.type == Piece.Type.KNIGHT) {
             List<Integer> knightMoves = new ArrayList<Integer>();
             
@@ -216,7 +230,9 @@ public class Controller {
                 this.legalMoves.add(m);
             }
         }
-
+        /*
+            QUEEN, BISHOP, ROOK -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+        */
         else {
             List<Integer> pieceMoves = new ArrayList<Integer>();
 
@@ -261,12 +277,6 @@ public class Controller {
                 int m = (int)itPieceMoves.next();
                 this.legalMoves.add(m);
             }
-        }
-        
-        Iterator DEBUGMOVES = this.legalMoves.iterator();
-        System.out.println("MOVES FOR: " + this.heldPiece);
-        while (DEBUGMOVES.hasNext()) {
-            System.out.println((int)DEBUGMOVES.next());
         }
     }
 

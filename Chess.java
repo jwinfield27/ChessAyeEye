@@ -9,6 +9,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -44,7 +45,8 @@ public class Chess extends javax.swing.JFrame {
     
     private final int BOARD_SIZE = 600;
     private final int SQUARE_SIZE = 75;
-    private final Color CYAN = new Color(0, 255, 255, 100); //rgba
+    private final Color CYAN = new Color(0, 255, 255, 125); //rgba
+    private final Color RYAN = new Color(255, 0,   0, 125); //rgba
     private final String IMG_DIR = "/img";
     
     private Map<String, BufferedImage> pieceIMG = new HashMap<String, BufferedImage>();
@@ -174,18 +176,6 @@ public class Chess extends javax.swing.JFrame {
                 }
             }
         }
-        
-        //Legal moves for the piece being held
-        //***********************************************************************************************
-        boolean draw = this.player.legalMoves.isEmpty();
-        if (!draw) {
-            Iterator pmoves = this.player.legalMoves.iterator();
-            while(pmoves.hasNext()) {
-                bufferGraphics.setColor(this.CYAN);
-                int[] point = squareToCoord(this.player.getHeld() + (int)pmoves.next());
-                bufferGraphics.fillRect(point[0] + this.PANEL_ORIGIN_X, point[1] + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
-            }
-        }
 
         //Pieces
         //***********************************************************************************************
@@ -202,7 +192,21 @@ public class Chess extends javax.swing.JFrame {
                 bufferGraphics.drawImage(pieceIMG.get(s.Piece.name + s.Piece.color), squareToCoord(key)[0] + this.PANEL_ORIGIN_X, squareToCoord(key)[1] + this.PANEL_ORIGIN_Y, this.rootPane);
             } 
         }
-        pieces.clear();
+//        pieces.clear(); //I'm not sure why this is here because It does nothing but maybe its important
+
+        //Legal moves for the piece being held
+        //***********************************************************************************************
+        if (this.player.isHolding()) {
+            Iterator pmoves = this.player.legalMoves.iterator();
+            while(pmoves.hasNext()) {
+                bufferGraphics.setColor(this.CYAN);
+                int[] point = squareToCoord(this.player.getHeld() + (int)pmoves.next());
+                bufferGraphics.fillOval(point[0] + this.PANEL_ORIGIN_X + ((SQUARE_SIZE/2)-(SQUARE_SIZE/6)), point[1] + this.PANEL_ORIGIN_Y + ((SQUARE_SIZE/2)-(SQUARE_SIZE/6)), SQUARE_SIZE/3, SQUARE_SIZE/3);
+//                bufferGraphics.fillRect(point[0] + this.PANEL_ORIGIN_X, point[1] + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
+            }
+        }
+        
+
         g.drawImage(buffer2, 0, 0, this.rootPane);
     }
     
