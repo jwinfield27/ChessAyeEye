@@ -152,7 +152,7 @@ public class Chess extends javax.swing.JFrame {
             int y = 0;
             int mentalStabilityCount = 0;
             for (Map.Entry<Integer, Square> e : this.player.GAMEBOARD.Squares.entrySet()) {
-                if (e.getValue().color == "W") {
+                if (e.getValue().squareColor == "W") {
                     bufferGraphics.setColor(Color.WHITE);
                 }
                 else {

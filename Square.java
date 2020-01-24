@@ -6,11 +6,11 @@ is currently on it if any.
 */
 
 public class Square {
-    public String color, rankfile;
+    public String squareColor, rankfile;
     public Piece Piece;
     
     public Square(String color, String rankfile, Piece piece) {
-        this.color = color;
+        this.squareColor = color;
         this.rankfile = rankfile;
         this.Piece = piece;
     } 

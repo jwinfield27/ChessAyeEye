@@ -153,10 +153,9 @@ public class Controller {
             int[] pawnAttacks = p.getPawnAttacks();
             for (int i = 0; i < pawnAttacks.length; i++) {
                 int move = pawnAttacks[i] * colorModifier;
-                System.out.println(move);
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + move) && 
                         (this.GAMEBOARD.Squares.get(squareID + move).isOccupied() && 
-                        this.GAMEBOARD.Squares.get(squareID + move).color != p.color)) {
+                        this.GAMEBOARD.Squares.get(squareID + move).Piece.color != p.color)) {
                     pawnMoves.add(pawnAttacks[i] * colorModifier);
                 }
             }
@@ -174,12 +173,12 @@ public class Controller {
             for (int i = 0; i < p.moves.length; i++) {
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) &&
                         (!this.GAMEBOARD.Squares.get(squareID + p.moves[i]).isOccupied() ||
-                            this.GAMEBOARD.Squares.get(squareID + p.moves[i]).color != p.color)) {
+                            this.GAMEBOARD.Squares.get(squareID + p.moves[i]).Piece.color != p.color)) {
                     kingMoves.add(p.moves[i]);
                 }
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) &&
                         (!this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).isOccupied() ||
-                            this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).color != p.color)) {
+                            this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).Piece.color != p.color)) {
                     kingMoves.add(p.moves[i] * -1);
                 }
             }
@@ -201,12 +200,12 @@ public class Controller {
             for (int i = 0; i < p.moves.length; i++) {
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) &&
                         (!this.GAMEBOARD.Squares.get(squareID + p.moves[i]).isOccupied() ||
-                        this.GAMEBOARD.Squares.get(squareID + p.moves[i]).color != p.color)) {
+                        this.GAMEBOARD.Squares.get(squareID + p.moves[i]).Piece.color != p.color)) {
                     knightMoves.add(p.moves[i]);
                 }
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) &&
                         (!this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).isOccupied() ||
-                        this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).color != p.color)) {
+                        this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).Piece.color != p.color)) {
                     knightMoves.add(p.moves[i] * -1);
                 }
             }
@@ -230,7 +229,7 @@ public class Controller {
                     if (!this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers)).isOccupied()) {
                         pieceMoves.add(distance * ogresHaveLayers);
                     }
-                    else if (this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers)).color != p.color) {
+                    else if (this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers)).Piece.color != p.color) {
                         pieceMoves.add(distance * ogresHaveLayers);
                         break;
                     }
@@ -246,7 +245,7 @@ public class Controller {
                     if (!this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers * -1)).isOccupied()) {
                         pieceMoves.add(distance * ogresHaveLayers * -1);
                     }
-                    else if (this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers * -1)).color != p.color) {
+                    else if (this.GAMEBOARD.Squares.get(squareID + (distance * ogresHaveLayers * -1)).Piece.color != p.color) {
                         pieceMoves.add(distance * ogresHaveLayers * -1);
                         break;
                     }
