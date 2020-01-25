@@ -4,17 +4,36 @@
   <NonVisualComponents>
     <Menu class="javax.swing.JMenuBar" name="jMenuBar1">
       <SubComponents>
-        <Menu class="javax.swing.JMenu" name="jMenu1">
+        <Menu class="javax.swing.JMenu" name="menuNewGame">
           <Properties>
-            <Property name="text" type="java.lang.String" value="File"/>
+            <Property name="text" type="java.lang.String" value="New Game"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="menuFileNewGame">
+            <MenuItem class="javax.swing.JMenuItem" name="menuNewGamePvP">
               <Properties>
-                <Property name="text" type="java.lang.String" value="New Game"/>
+                <Property name="text" type="java.lang.String" value="PvP"/>
+                <Property name="toolTipText" type="java.lang.String" value="Player vs Player"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuFileNewGameActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuNewGamePvPActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuNewGamePvC">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="PvC"/>
+                <Property name="toolTipText" type="java.lang.String" value="Player vs Computer"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuNewGamePvCActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="menuNewGameCvC">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="CvC"/>
+                <Property name="toolTipText" type="java.lang.String" value="(AI vs AI)"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="menuNewGameCvCActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

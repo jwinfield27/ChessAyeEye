@@ -10,15 +10,31 @@ import java.util.Set;
 
 public class Controller {
     public static Board GAMEBOARD; //this is THE board that is actually being played on.
-    public static Boolean whiteFirstTurn = true; //why do we need these?
-    public static Boolean blackFirstTurn = true;
-    public String color = "W";
-
-    private int heldPiece = -1;
-    private boolean holdingPiece = false;
+    
+    private Player PLAYER1;
+    private Player PLAYER2;
+    public Player currentPlayer;
+    
     public List<Integer> legalMoves = new ArrayList<>();
+    public List<Integer> legalSquaresWhiteKing = new ArrayList<>();
+    public List<Integer> legalSquaresBlackKing = new ArrayList<>();
 
-    public Controller() {
+    public Controller(String gameType) {
+        switch (gameType) {
+            case "PvP": this.PLAYER1 = new Player("W");
+                        this.PLAYER2 = new Player("B");
+                        this.currentPlayer = this.PLAYER1;
+                        break;
+            case "PvC": this.PLAYER1 = new Player("W");
+                        this.PLAYER2 = new AI("B");
+                        this.currentPlayer = this.PLAYER1;
+                        break;
+            case "CvC": this.PLAYER1 = new AI("W");
+                        this.PLAYER2 = new AI("B");
+                        this.currentPlayer = this.PLAYER1;
+                        break;
+            default:    System.out.println("Uh oh spaghettios Controller ~36");
+        }
         this.GAMEBOARD = new Board();
     }
 
@@ -26,35 +42,29 @@ public class Controller {
         GAMEBOARD = board;
     }
 
-
-    private void newController(Board board){
-        //I don't think Controller will be making new controllers ver often?
-        //one for player one for AI?
-        //So maybe this is newBoard() instead to add boards to
-        //possibleMoves for the AI?
-    }
-
     //decides whether to move, capture, or drop a pice that is being held
     public void handleClick(int squareID) {
+        Player p = this.currentPlayer;
         //if we are holding a piece
-        if (this.holdingPiece) {
-            this.getLegalMoves(this.heldPiece);
+        if (p.isHolding()) {
+            int heldPiece = p.getHeld();
+            this.getLegalMoves(heldPiece);
 
             //If we click on the square where the piece started
-            if (this.heldPiece == squareID) {
-                this.dropPiece();
+            if (heldPiece == squareID) {
+                p.dropPiece();
             }
 
             //If we click on an empty square
             else if (!this.GAMEBOARD.Squares.get(squareID).isOccupied()) {
 
 //                get distance to click
-                int distance = (squareID - this.heldPiece);
+                int distance = (squareID - heldPiece);
 
                 //if the distance is in the move list then it can move
                 for (int element : this.legalMoves) {
                     if (element == distance) {
-                        this.movePiece(this.heldPiece, squareID);
+                        this.movePiece(heldPiece, squareID);
                     }
                 }
             }
@@ -64,19 +74,19 @@ public class Controller {
 
                 //If we click on a piece of the same color do nothing
                 //Maybe this is where we could check for castling?
-                if (this.GAMEBOARD.Squares.get(squareID).Piece.color == this.GAMEBOARD.Squares.get(this.heldPiece).Piece.color) {
-                    this.dropPiece();
+                if (this.GAMEBOARD.Squares.get(squareID).Piece.color == this.GAMEBOARD.Squares.get(heldPiece).Piece.color) {
+                    p.dropPiece();
                 }
 
                 //if we are holding a piece and click on an enemy piece
                 else {
                     //get distance to click
-                    int distance = (squareID - this.heldPiece);
+                    int distance = (squareID - heldPiece);
 
                     //if the distance is in the move list then it can move
                     for (int element : legalMoves) {
                         if (element == distance) {
-                            this.capturePiece(this.heldPiece, squareID);
+                            this.capturePiece(heldPiece, squareID);
                         }
                     }
                 }
@@ -84,47 +94,49 @@ public class Controller {
         }
 
         else {
-            if ((this.GAMEBOARD.Squares.get(squareID).Piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).Piece.color == this.color)) {
-                this.heldPiece = squareID;
-                this.holdingPiece = true;
-                this.getLegalMoves(this.heldPiece);
+            if ((this.GAMEBOARD.Squares.get(squareID).Piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).Piece.color == p.color)) {
+                p.grabPiece(squareID);
+                this.getLegalMoves(squareID);
             }
         }
     }
 
-    public int getHeld() {
-        return this.heldPiece;
-    }
-    
-    public boolean isHolding() {
-        return this.holdingPiece;
-    }
-
-    private void dropPiece() {
-        this.heldPiece = -1;
-        this.holdingPiece = false;
-    }
 
     private void movePiece(int leavingSquare, int destination) {
         if (this.GAMEBOARD.Squares.get(leavingSquare).Piece.onSpot) {this.GAMEBOARD.Squares.get(leavingSquare).Piece.setMoved();}
 
         //This is work around for AI vs Player movePiece so AI dont shit his pants
-        if (this.holdingPiece) {this.dropPiece();}
+        if (this.currentPlayer.isHolding()) {this.currentPlayer.dropPiece();}
 
         this.GAMEBOARD.Squares.get(destination).Piece = this.GAMEBOARD.Squares.get(leavingSquare).Piece;
         this.GAMEBOARD.Squares.get(leavingSquare).Piece = new Piece(); //creates a new "NONE" piece
+        this.endTurn();
     }
 
     private void capturePiece(int attackingSquare, int capturedSquare) {
-        if (this.GAMEBOARD.Squares.get(this.heldPiece).Piece.onSpot) {this.GAMEBOARD.Squares.get(this.heldPiece).Piece.setMoved();}
+        if (this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.onSpot) {this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.setMoved();}
 
         //This is work around for AI vs Player movePiece so AI dont shit his pants
-        if (this.holdingPiece) {this.dropPiece();}
+        if (this.currentPlayer.isHolding()) {this.currentPlayer.dropPiece();}
 
         this.GAMEBOARD.Squares.get(capturedSquare).Piece = this.GAMEBOARD.Squares.get(attackingSquare).Piece;
         this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
+        this.endTurn();
     }
 
+    private void endTurn() {
+        if ("W".equals(this.currentPlayer.color)) {
+            this.currentPlayer = this.PLAYER2;
+        }
+        else {
+            this.currentPlayer = this.PLAYER1;
+        }
+    }
+
+    private void getBadSquares() {
+        //maybe get list of bad squares for kings here or do it in getLegalMoves
+    }
+    
     public void getLegalMoves(int squareID) {
         this.legalMoves.clear();
         
@@ -285,7 +297,4 @@ public class Controller {
       movePiece(squareID,legalMoves.get(legalMoves.size()-1)+squareID);
       return (squareID + legalMoves.get(legalMoves.size()-1));
     }
-//                for (int i = 0; i < p.moves.length; i++) {
-//                    
-//                }
 }

@@ -40,13 +40,12 @@ public class Chess extends javax.swing.JFrame {
     things more complicated?
     */
 //    public Board board = new Board();
-    public Controller player;
-    public Controller AI;
+    public Controller controller;
     
     private final int BOARD_SIZE = 600;
     private final int SQUARE_SIZE = 75;
-    private final Color CYAN = new Color(0, 255, 255, 125); //rgba
-    private final Color RYAN = new Color(255, 0,   0, 125); //rgba
+    private final Color CYAN = new Color(0, 255, 255, 125); //rgba 
+    private final Color RYAN = new Color(255, 0,   0, 125); //rgba Red cyan for no-no spots
     private final String IMG_DIR = "/img";
     
     private Map<String, BufferedImage> pieceIMG = new HashMap<String, BufferedImage>();
@@ -65,8 +64,7 @@ public class Chess extends javax.swing.JFrame {
     public Chess() {
         initComponents();
         
-        this.player = new Controller();
-        this.AI = new Controller(this.player.GAMEBOARD);
+        this.controller = new Controller("PvP"); //by default make a pvp game
         
         /*
         Instead of images we could use a text field for each square on the 
@@ -153,7 +151,7 @@ public class Chess extends javax.swing.JFrame {
             int x = 0;
             int y = 0;
             int mentalStabilityCount = 0;
-            for (Map.Entry<Integer, Square> e : this.player.GAMEBOARD.Squares.entrySet()) {
+            for (Map.Entry<Integer, Square> e : this.controller.GAMEBOARD.Squares.entrySet()) {
                 if (e.getValue().squareColor == "W") {
                     bufferGraphics.setColor(Color.WHITE);
                 }
@@ -182,10 +180,10 @@ public class Chess extends javax.swing.JFrame {
         Iterator it = pieces.iterator();
         while(it.hasNext()) {
             int key = (int)it.next();
-            Square s = this.player.GAMEBOARD.Squares.get(key);
+            Square s = this.controller.GAMEBOARD.Squares.get(key);
             
             //if we holding a piece then we can have it float all cool like :D
-            if (key == this.player.getHeld()) {
+            if (key == this.controller.currentPlayer.getHeld()) {
                 bufferGraphics.drawImage(pieceIMG.get(s.Piece.name + s.Piece.color), this.mouseX + this.PANEL_ORIGIN_X - (this.SQUARE_SIZE/2), this.mouseY + this.PANEL_ORIGIN_Y - (this.SQUARE_SIZE/2), this.rootPane); 
             }
             else {
@@ -196,11 +194,11 @@ public class Chess extends javax.swing.JFrame {
 
         //Legal moves for the piece being held
         //***********************************************************************************************
-        if (this.player.isHolding()) {
-            Iterator pmoves = this.player.legalMoves.iterator();
+        if (this.controller.currentPlayer.isHolding()) {
+            Iterator pmoves = this.controller.legalMoves.iterator();
             while(pmoves.hasNext()) {
                 bufferGraphics.setColor(this.CYAN);
-                int[] point = squareToCoord(this.player.getHeld() + (int)pmoves.next());
+                int[] point = squareToCoord(this.controller.currentPlayer.getHeld() + (int)pmoves.next());
                 bufferGraphics.fillOval(point[0] + this.PANEL_ORIGIN_X + ((SQUARE_SIZE/2)-(SQUARE_SIZE/6)), point[1] + this.PANEL_ORIGIN_Y + ((SQUARE_SIZE/2)-(SQUARE_SIZE/6)), SQUARE_SIZE/3, SQUARE_SIZE/3);
 //                bufferGraphics.fillRect(point[0] + this.PANEL_ORIGIN_X, point[1] + this.PANEL_ORIGIN_Y, SQUARE_SIZE, SQUARE_SIZE);
             }
@@ -226,8 +224,10 @@ public class Chess extends javax.swing.JFrame {
 
         panelChessboard = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        menuFileNewGame = new javax.swing.JMenuItem();
+        menuNewGame = new javax.swing.JMenu();
+        menuNewGamePvP = new javax.swing.JMenuItem();
+        menuNewGamePvC = new javax.swing.JMenuItem();
+        menuNewGameCvC = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -268,17 +268,36 @@ public class Chess extends javax.swing.JFrame {
             .addGap(0, 600, Short.MAX_VALUE)
         );
 
-        jMenu1.setText("File");
+        menuNewGame.setText("New Game");
 
-        menuFileNewGame.setText("New Game");
-        menuFileNewGame.addActionListener(new java.awt.event.ActionListener() {
+        menuNewGamePvP.setText("PvP");
+        menuNewGamePvP.setToolTipText("Player vs Player");
+        menuNewGamePvP.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuFileNewGameActionPerformed(evt);
+                menuNewGamePvPActionPerformed(evt);
             }
         });
-        jMenu1.add(menuFileNewGame);
+        menuNewGame.add(menuNewGamePvP);
 
-        jMenuBar1.add(jMenu1);
+        menuNewGamePvC.setText("PvC");
+        menuNewGamePvC.setToolTipText("Player vs Computer");
+        menuNewGamePvC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuNewGamePvCActionPerformed(evt);
+            }
+        });
+        menuNewGame.add(menuNewGamePvC);
+
+        menuNewGameCvC.setText("CvC");
+        menuNewGameCvC.setToolTipText("(AI vs AI)");
+        menuNewGameCvC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuNewGameCvCActionPerformed(evt);
+            }
+        });
+        menuNewGame.add(menuNewGameCvC);
+
+        jMenuBar1.add(menuNewGame);
         jMenuBar1.add(jMenu2);
 
         setJMenuBar(jMenuBar1);
@@ -311,20 +330,28 @@ public class Chess extends javax.swing.JFrame {
         int squareKey = coordToSquare(this.mouseX, this.mouseY);
         this.mouseX = evt.getX();
         this.mouseY = evt.getY();
-        this.player.handleClick(squareKey);
+        this.controller.handleClick(squareKey);
         repaint(); //this calls the paint() function again
         
     }//GEN-LAST:event_panelChessboardMouseClicked
 
-    private void menuFileNewGameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFileNewGameActionPerformed
-        newGame();
-    }//GEN-LAST:event_menuFileNewGameActionPerformed
+    private void menuNewGamePvPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewGamePvPActionPerformed
+        newGame("PvP");
+    }//GEN-LAST:event_menuNewGamePvPActionPerformed
 
     private void panelChessboardMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_panelChessboardMouseMoved
         this.mouseX = evt.getX();
         this.mouseY = evt.getY();
         repaint();
     }//GEN-LAST:event_panelChessboardMouseMoved
+
+    private void menuNewGameCvCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewGameCvCActionPerformed
+        newGame("CvC");
+    }//GEN-LAST:event_menuNewGameCvCActionPerformed
+
+    private void menuNewGamePvCActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuNewGamePvCActionPerformed
+        newGame("PvC");
+    }//GEN-LAST:event_menuNewGamePvCActionPerformed
 
     
     /**
@@ -364,10 +391,12 @@ public class Chess extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem menuFileNewGame;
+    private javax.swing.JMenu menuNewGame;
+    private javax.swing.JMenuItem menuNewGameCvC;
+    private javax.swing.JMenuItem menuNewGamePvC;
+    private javax.swing.JMenuItem menuNewGamePvP;
     private javax.swing.JPanel panelChessboard;
     // End of variables declaration//GEN-END:variables
  
@@ -434,9 +463,8 @@ public class Chess extends javax.swing.JFrame {
         return coord;
     }
 
-    private void newGame() {
-        this.player = new Controller();
-        this.AI = new Controller(this.player.GAMEBOARD);
+    private void newGame(String gameType) {
+        this.controller = new Controller(gameType);
         repaint();
     }
 }
