@@ -1,12 +1,8 @@
 package ChessAyeEye;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class Controller {
     public static Board GAMEBOARD; //this is THE board that is actually being played on.
@@ -18,9 +14,10 @@ public class Controller {
     public List<Integer> legalMoves = new ArrayList<>();
     public List<Integer> legalSquaresWhiteKing = new ArrayList<>();
     public List<Integer> legalSquaresBlackKing = new ArrayList<>();
+    
     private int enPassantSquare = -1;
     private int enPassantPiece = -1;
-
+    
     public Controller(String gameType) {
         switch (gameType) {
             case "PvP": this.PLAYER1 = new Player("W");
@@ -66,14 +63,28 @@ public class Controller {
                 //if the distance is in the move list then it can move
                 for (int element : this.legalMoves) {
                     if (element == distance) {
+                        
+                        
+                        //EN PASSANT-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
+                        //If we move 2 squares with a pawn, update the en passant square and piece to their correct values
                         if (this.GAMEBOARD.Squares.get(heldPiece).Piece.type == Piece.Type.PAWN && (Math.abs(distance) == (this.GAMEBOARD.Squares.get(heldPiece).Piece.moves[0] * 2))) {
                            this.enPassantSquare = heldPiece + (distance/2); 
                            this.enPassantPiece = squareID;
-                           System.out.println("En Passant: \t" + this.enPassantSquare);
+//                           System.out.println("En Passant: \t" + this.enPassantSquare);
                         }
+                        
+                        //if we click on the en passant square we invoke the rule and dish out sweet justice to the foolish pawn
                         if (squareID == this.enPassantSquare) {
                             this.capturePieceEnPassant(heldPiece, squareID);
                         }
+                        
+                        else if (this.GAMEBOARD.Squares.get(heldPiece).Piece.type == Piece.Type.KING && 
+                                (distance == this.GAMEBOARD.Squares.get(heldPiece).Piece.getCastlingMoves()[0] ||
+                                distance == this.GAMEBOARD.Squares.get(heldPiece).Piece.getCastlingMoves()[1])) {
+                            this.movePieceCaslting(heldPiece, distance);
+                            
+                        }
+                        //otherwise we just move to the blank square
                         else {
                             this.movePiece(heldPiece, squareID);
                         }
@@ -125,6 +136,29 @@ public class Controller {
         this.endTurn();
     }
 
+    private void movePieceCaslting(int leavingSquare, int dir) {
+        this.GAMEBOARD.Squares.get(leavingSquare).Piece.setMoved();
+
+        //This is work around for AI vs Player movePiece so AI dont shit his pants
+        if (this.currentPlayer.isHolding()) {this.currentPlayer.dropPiece();}
+        
+        //first we move our king to his new square
+        this.GAMEBOARD.Squares.get(leavingSquare + dir).Piece = this.GAMEBOARD.Squares.get(leavingSquare).Piece;
+        this.GAMEBOARD.Squares.get(leavingSquare).Piece = new Piece(); //creates a new "NONE" piece
+        
+        //then we move our rook to their new square.
+        if (dir > 0) {
+            this.GAMEBOARD.Squares.get(leavingSquare + 1).Piece = this.GAMEBOARD.Squares.get(leavingSquare + 3).Piece;
+            this.GAMEBOARD.Squares.get(leavingSquare + 3).Piece = new Piece();
+        }
+        else {
+            this.GAMEBOARD.Squares.get(leavingSquare - 2).Piece = this.GAMEBOARD.Squares.get(leavingSquare - 4).Piece;
+            this.GAMEBOARD.Squares.get(leavingSquare - 4).Piece = new Piece();
+        }
+        
+        this.endTurn();
+    }
+
     private void capturePiece(int attackingSquare, int capturedSquare) {
         if (this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.onSpot) {this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.setMoved();}
 
@@ -135,6 +169,9 @@ public class Controller {
         this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
         this.endTurn();
     }
+    
+    //Right now we need this because handleClick() sorts between empty squares and occupied squares for moves/ attacks
+    //and en passant attacks by moving to an empty square so yeah
     private void capturePieceEnPassant(int attackingSquare, int capturedSquare) {
         if (this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.onSpot) {this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.setMoved();}
 
@@ -147,6 +184,11 @@ public class Controller {
         this.endTurn();
     }
 
+    /*
+        This swaps between white and black moves, and clears the en passant 
+        square / piece unless it was just set by the player whose turn it is.
+    */
+    
     private void endTurn() {
         if ("W".equals(this.currentPlayer.color)) {
             this.currentPlayer = this.PLAYER2;
@@ -205,7 +247,9 @@ public class Controller {
             int[] pawnAttacks = p.getPawnAttacks();
             for (int i = 0; i < pawnAttacks.length; i++) {
                 int move = pawnAttacks[i] * colorModifier;
+                //if the square we are checking for moving to exists
                 if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + move)) {
+                    //if square is occupied by an enemy piece OR it is the enpassant square for an enemy piece
                     if ((this.GAMEBOARD.Squares.get(squareID + move).isOccupied() && 
                         this.GAMEBOARD.Squares.get(squareID + move).Piece.color != p.color) ||
                         ((squareID + move) == this.enPassantSquare) && this.GAMEBOARD.Squares.get(squareID + move).Piece.color != p.color) {
@@ -244,7 +288,14 @@ public class Controller {
             */
             
             if (p.onSpot) {
-                System.out.println("CONTROLLER::~180 \t | \t Haha, haven't written castling yet.");
+                if (this.GAMEBOARD.Squares.get(squareID + 3).Piece.onSpot && 
+                        (!this.GAMEBOARD.Squares.get(squareID + 1).isOccupied() && !this.GAMEBOARD.Squares.get(squareID + 2).isOccupied())) {
+                    kingMoves.add(p.getCastlingMoves()[0]);
+                }
+                if (this.GAMEBOARD.Squares.get(squareID - 4).Piece.onSpot && 
+                        (!this.GAMEBOARD.Squares.get(squareID - 1).isOccupied() && !this.GAMEBOARD.Squares.get(squareID - 2).isOccupied() && !this.GAMEBOARD.Squares.get(squareID - 3).isOccupied())) {
+                    kingMoves.add(p.getCastlingMoves()[1]);
+                }
             }
 
             Iterator itKingMoves = kingMoves.iterator();

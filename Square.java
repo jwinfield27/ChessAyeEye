@@ -11,7 +11,8 @@ public class Square {
     
     public Square(String color, String rankfile, Piece piece) {
         this.squareColor = color;
-        this.rankfile = rankfile;
+        this.rankfile = rankfile; //I think this should be KB1, KB2 (Kings bishop 1, 2)
+                                  //https://en.wikipedia.org/wiki/Descriptive_notation
         this.Piece = piece;
     } 
     

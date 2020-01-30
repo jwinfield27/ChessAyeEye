@@ -31,7 +31,7 @@ public class Piece {
     //the move 2,3 cases are a special case for castling
     //maybe moves castling moves to a different array?
     private final static int[] KING_MOVES = {1,15,16,17};
-    private final static int[] KING_CASTLE = {2,3};
+    private final static int[] KING_CASTLE = {2,-3};
 
     }
 //    private final static int[] PAWN_MOVES = {16,32,0,15,17};
@@ -104,9 +104,13 @@ public class Piece {
     public int[] getPawnAttacks() {
         return Type.PAWN_ATTACKS;
     }
+    
+    public int[] getCastlingMoves() {
+        return Type.KING_CASTLE;
+    }
 
     public String color = "W";
-    public String name = "NONE";
+    public String name = "NONE"; //I think this is where we should say "KB" (Kings Bishop) etc.
     public int value = 0;
     public int[] moves;
     public boolean onSpot = true;
