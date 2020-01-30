@@ -18,6 +18,8 @@ public class Controller {
     public List<Integer> legalMoves = new ArrayList<>();
     public List<Integer> legalSquaresWhiteKing = new ArrayList<>();
     public List<Integer> legalSquaresBlackKing = new ArrayList<>();
+    private int enPassantSquare = -1;
+    private int enPassantPiece = -1;
 
     public Controller(String gameType) {
         switch (gameType) {
@@ -64,7 +66,17 @@ public class Controller {
                 //if the distance is in the move list then it can move
                 for (int element : this.legalMoves) {
                     if (element == distance) {
-                        this.movePiece(heldPiece, squareID);
+                        if (this.GAMEBOARD.Squares.get(heldPiece).Piece.type == Piece.Type.PAWN && (Math.abs(distance) == (this.GAMEBOARD.Squares.get(heldPiece).Piece.moves[0] * 2))) {
+                           this.enPassantSquare = heldPiece + (distance/2); 
+                           this.enPassantPiece = squareID;
+                           System.out.println("En Passant: \t" + this.enPassantSquare);
+                        }
+                        if (squareID == this.enPassantSquare) {
+                            this.capturePieceEnPassant(heldPiece, squareID);
+                        }
+                        else {
+                            this.movePiece(heldPiece, squareID);
+                        }
                     }
                 }
             }
@@ -123,13 +135,36 @@ public class Controller {
         this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
         this.endTurn();
     }
+    private void capturePieceEnPassant(int attackingSquare, int capturedSquare) {
+        if (this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.onSpot) {this.GAMEBOARD.Squares.get(this.currentPlayer.getHeld()).Piece.setMoved();}
+
+        //This is work around for AI vs Player movePiece so AI dont shit his pants
+        if (this.currentPlayer.isHolding()) {this.currentPlayer.dropPiece();}
+
+        this.GAMEBOARD.Squares.get(capturedSquare).Piece = this.GAMEBOARD.Squares.get(attackingSquare).Piece;
+        this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
+        this.GAMEBOARD.Squares.get(this.enPassantPiece).Piece = new Piece();
+        this.endTurn();
+    }
 
     private void endTurn() {
         if ("W".equals(this.currentPlayer.color)) {
             this.currentPlayer = this.PLAYER2;
+            if (this.enPassantPiece >=0) {
+                if (this.GAMEBOARD.Squares.get(this.enPassantPiece).Piece.color == "B") {
+                    this.enPassantPiece = -1;
+                    this.enPassantSquare = -1;
+                }
+           }
         }
         else {
             this.currentPlayer = this.PLAYER1;
+            if (this.enPassantPiece >=0) {
+                if (this.GAMEBOARD.Squares.get(this.enPassantPiece).Piece.color == "W") {
+                    this.enPassantPiece = -1;
+                    this.enPassantSquare = -1;
+                }
+           }
         }
     }
 
@@ -163,18 +198,19 @@ public class Controller {
                     !this.GAMEBOARD.Squares.get(squareID + (p.moves[0] * colorModifier)).isOccupied()) {
                 pawnMoves.add(p.moves[0] * colorModifier);
             }
-            //Set an EnPassant square here, that the pawn can be captured one turn after
             if (p.onSpot && !this.GAMEBOARD.Squares.get(squareID + (p.moves[0] * colorModifier * 2)).isOccupied()) {
-                pawnMoves.add(p.moves[0] * (colorModifier * 2));
+                pawnMoves.add(p.moves[0] * colorModifier * 2);
             }
             
             int[] pawnAttacks = p.getPawnAttacks();
             for (int i = 0; i < pawnAttacks.length; i++) {
                 int move = pawnAttacks[i] * colorModifier;
-                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + move) && 
-                        (this.GAMEBOARD.Squares.get(squareID + move).isOccupied() && 
-                        this.GAMEBOARD.Squares.get(squareID + move).Piece.color != p.color)) {
-                    pawnMoves.add(pawnAttacks[i] * colorModifier);
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + move)) {
+                    if ((this.GAMEBOARD.Squares.get(squareID + move).isOccupied() && 
+                        this.GAMEBOARD.Squares.get(squareID + move).Piece.color != p.color) ||
+                        ((squareID + move) == this.enPassantSquare) && this.GAMEBOARD.Squares.get(squareID + move).Piece.color != p.color) {
+                        pawnMoves.add(pawnAttacks[i] * colorModifier);
+                    }
                 }
             }
             
