@@ -1,5 +1,6 @@
 package ChessAyeEye;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 //en.wikipedia.org/wiki/Minimax
 
 public class AI extends Player {
@@ -11,6 +12,8 @@ public class AI extends Player {
         takeTurn();
     }
     public void takeTurn(){
+        //this will be controller.pieceList___.length
+        int randPiece = ThreadLocalRandom.current().nextInt(0, 1);
   //testing the value check of a possible move
   //grabbing the pawn from A7 and moving it 4 spaces for tests sake then checking the possible
   //responses from the opponent

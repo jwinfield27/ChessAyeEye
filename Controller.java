@@ -3,9 +3,14 @@ package ChessAyeEye;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class Controller {
     public static Board GAMEBOARD; //this is THE board that is actually being played on.
+    
+    //These are for AI to keep track of whwere pieces are
+    public List<Integer> pieceListWhite = new ArrayList<>(16);
+    public List<Integer> pieceListBlack = new ArrayList<>(16);
     
     private Player PLAYER1;
     private Player PLAYER2;
@@ -35,6 +40,19 @@ public class Controller {
             default:    System.out.println("Uh oh spaghettios Controller ~36");
         }
         this.GAMEBOARD = new Board();
+                
+        for (Map.Entry<Integer, Square> e : this.GAMEBOARD.Squares.entrySet()) {
+            int id = (int)e.getKey();
+            Piece p = this.GAMEBOARD.Squares.get(id).Piece;
+            if (p.type != Piece.Type.NONE) {
+                if (p.color == "B") {
+                    this.pieceListBlack.add(id);
+                }
+                else {
+                    this.pieceListWhite.add(id);
+                }
+            }
+        }
     }
 
     public Controller(Board board){
@@ -133,6 +151,18 @@ public class Controller {
 
         this.GAMEBOARD.Squares.get(destination).Piece = this.GAMEBOARD.Squares.get(leavingSquare).Piece;
         this.GAMEBOARD.Squares.get(leavingSquare).Piece = new Piece(); //creates a new "NONE" piece
+        
+                        String c = this.currentPlayer.color;
+                        if (c == "B") {
+                            // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
+                            this.pieceListBlack.removeIf(p -> p.equals(leavingSquare)); 
+                            this.pieceListBlack.add(destination);
+                        }
+                        else {
+                            this.pieceListWhite.removeIf(p -> p.equals(leavingSquare));
+                            this.pieceListWhite.add(destination);
+                        }
+                
         this.endTurn();
     }
 
@@ -156,6 +186,36 @@ public class Controller {
             this.GAMEBOARD.Squares.get(leavingSquare - 4).Piece = new Piece();
         }
         
+                    String c = this.currentPlayer.color;
+                    if (c == "B") {
+                        // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
+                        //king
+                        this.pieceListBlack.removeIf(p -> p.equals(leavingSquare)); 
+                        this.pieceListBlack.add(leavingSquare + dir);
+                        if (dir > 0) { //rook
+                            this.pieceListBlack.removeIf(p -> p.equals(leavingSquare + 3)); 
+                            this.pieceListBlack.add(leavingSquare + 1);
+                        }
+                        else {
+                            this.pieceListBlack.removeIf(p -> p.equals(leavingSquare - 4)); 
+                            this.pieceListBlack.add(leavingSquare - 2);
+                        }
+                    }
+                    else {
+                        //king
+                        this.pieceListWhite.removeIf(p -> p.equals(leavingSquare)); 
+                        this.pieceListWhite.add(leavingSquare + dir);
+                        //rook
+                        if (dir > 0) {
+                            this.pieceListWhite.removeIf(p -> p.equals(leavingSquare + 3)); 
+                            this.pieceListWhite.add(leavingSquare + 1);
+                        }
+                        else {
+                            this.pieceListWhite.removeIf(p -> p.equals(leavingSquare - 4)); 
+                            this.pieceListWhite.add(leavingSquare - 2);
+                        }
+                    }
+        
         this.endTurn();
     }
 
@@ -167,6 +227,21 @@ public class Controller {
 
         this.GAMEBOARD.Squares.get(capturedSquare).Piece = this.GAMEBOARD.Squares.get(attackingSquare).Piece;
         this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
+        
+                    String c = this.currentPlayer.color;
+                    if (c == "B") {
+                        // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
+                        //king
+                        this.pieceListBlack.removeIf(p -> p.equals(attackingSquare)); 
+                        this.pieceListBlack.add(capturedSquare);
+                        this.pieceListWhite.removeIf(p -> p.equals(capturedSquare));
+                    }
+                    else {
+                        this.pieceListWhite.removeIf(p -> p.equals(attackingSquare)); 
+                        this.pieceListWhite.add(capturedSquare);
+                        this.pieceListBlack.removeIf(p -> p.equals(capturedSquare));
+                    }
+        
         this.endTurn();
     }
     
@@ -181,6 +256,21 @@ public class Controller {
         this.GAMEBOARD.Squares.get(capturedSquare).Piece = this.GAMEBOARD.Squares.get(attackingSquare).Piece;
         this.GAMEBOARD.Squares.get(attackingSquare).Piece = new Piece();
         this.GAMEBOARD.Squares.get(this.enPassantPiece).Piece = new Piece();
+        
+                    String c = this.currentPlayer.color;
+                    if (c == "B") {
+                        // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
+                        //king
+                        this.pieceListBlack.removeIf(p -> p.equals(attackingSquare)); 
+                        this.pieceListBlack.add(capturedSquare);
+                        this.pieceListWhite.removeIf(p -> p.equals(this.enPassantPiece));
+                    }
+                    else {
+                        this.pieceListWhite.removeIf(p -> p.equals(attackingSquare)); 
+                        this.pieceListWhite.add(capturedSquare);
+                        this.pieceListBlack.removeIf(p -> p.equals(this.enPassantPiece));
+                    }
+        
         this.endTurn();
     }
 
@@ -208,6 +298,16 @@ public class Controller {
                 }
            }
         }
+//        System.out.println("BLACK:");
+//        Iterator itb = this.pieceListBlack.iterator();
+//        while(itb.hasNext()) {
+//            System.out.println(itb.next());
+//        }
+//        System.out.println("WHITE:");
+//        Iterator itw = this.pieceListWhite.iterator();
+//        while(itw.hasNext()) {
+//            System.out.println(itw.next());
+//        }
     }
 
     private void getBadSquares() {
