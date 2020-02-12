@@ -8,17 +8,13 @@ import java.util.Map;
 public class Controller {
     public static Board GAMEBOARD; //this is THE board that is actually being played on.
     
-    //These are for AI to keep track of whwere pieces are
-    public List<Integer> pieceListWhite = new ArrayList<>(16);
-    public List<Integer> pieceListBlack = new ArrayList<>(16);
-    
     private Player PLAYER1;
     private Player PLAYER2;
     public Player currentPlayer;
     
     public List<Integer> legalMoves = new ArrayList<>();
-    public List<Integer> legalSquaresWhiteKing = new ArrayList<>();
-    public List<Integer> legalSquaresBlackKing = new ArrayList<>();
+    public List<Integer> illegalSquaresWhiteKing = new ArrayList<>();
+    public List<Integer> illegalSquaresBlackKing = new ArrayList<>();
     
     private int enPassantSquare = -1;
     private int enPassantPiece = -1;
@@ -46,10 +42,10 @@ public class Controller {
             Piece p = this.GAMEBOARD.Squares.get(id).Piece;
             if (p.type != Piece.Type.NONE) {
                 if (p.color == "B") {
-                    this.pieceListBlack.add(id);
+                    this.PLAYER2.pieceList.add(id);
                 }
                 else {
-                    this.pieceListWhite.add(id);
+                    this.PLAYER1.pieceList.add(id);
                 }
             }
         }
@@ -65,7 +61,7 @@ public class Controller {
         //if we are holding a piece
         if (p.isHolding()) {
             int heldPiece = p.getHeld();
-            this.getLegalMoves(heldPiece);
+            this.legalMoves.addAll(this.getLegalMoves(heldPiece));
 
             //If we click on the square where the piece started
             if (heldPiece == squareID) {
@@ -137,7 +133,7 @@ public class Controller {
         else {
             if ((this.GAMEBOARD.Squares.get(squareID).Piece.name != "NONE") && (this.GAMEBOARD.Squares.get(squareID).Piece.color == p.color)) {
                 p.grabPiece(squareID);
-                this.getLegalMoves(squareID);
+                this.legalMoves.addAll(this.getLegalMoves(this.currentPlayer.getHeld()));
             }
         }
     }
@@ -155,12 +151,12 @@ public class Controller {
                         String c = this.currentPlayer.color;
                         if (c == "B") {
                             // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
-                            this.pieceListBlack.removeIf(p -> p.equals(leavingSquare)); 
-                            this.pieceListBlack.add(destination);
+                            this.PLAYER2.pieceList.removeIf(p -> p.equals(leavingSquare)); 
+                            this.PLAYER2.pieceList.add(destination);
                         }
                         else {
-                            this.pieceListWhite.removeIf(p -> p.equals(leavingSquare));
-                            this.pieceListWhite.add(destination);
+                            this.PLAYER1.pieceList.removeIf(p -> p.equals(leavingSquare));
+                            this.PLAYER1.pieceList.add(destination);
                         }
                 
         this.endTurn();
@@ -190,29 +186,29 @@ public class Controller {
                     if (c == "B") {
                         // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
                         //king
-                        this.pieceListBlack.removeIf(p -> p.equals(leavingSquare)); 
-                        this.pieceListBlack.add(leavingSquare + dir);
+                        this.PLAYER2.pieceList.removeIf(p -> p.equals(leavingSquare)); 
+                        this.PLAYER2.pieceList.add(leavingSquare + dir);
                         if (dir > 0) { //rook
-                            this.pieceListBlack.removeIf(p -> p.equals(leavingSquare + 3)); 
-                            this.pieceListBlack.add(leavingSquare + 1);
+                            this.PLAYER2.pieceList.removeIf(p -> p.equals(leavingSquare + 3)); 
+                            this.PLAYER2.pieceList.add(leavingSquare + 1);
                         }
                         else {
-                            this.pieceListBlack.removeIf(p -> p.equals(leavingSquare - 4)); 
-                            this.pieceListBlack.add(leavingSquare - 2);
+                            this.PLAYER2.pieceList.removeIf(p -> p.equals(leavingSquare - 4)); 
+                            this.PLAYER2.pieceList.add(leavingSquare - 2);
                         }
                     }
                     else {
                         //king
-                        this.pieceListWhite.removeIf(p -> p.equals(leavingSquare)); 
-                        this.pieceListWhite.add(leavingSquare + dir);
+                        this.PLAYER1.pieceList.removeIf(p -> p.equals(leavingSquare)); 
+                        this.PLAYER1.pieceList.add(leavingSquare + dir);
                         //rook
                         if (dir > 0) {
-                            this.pieceListWhite.removeIf(p -> p.equals(leavingSquare + 3)); 
-                            this.pieceListWhite.add(leavingSquare + 1);
+                            this.PLAYER1.pieceList.removeIf(p -> p.equals(leavingSquare + 3)); 
+                            this.PLAYER1.pieceList.add(leavingSquare + 1);
                         }
                         else {
-                            this.pieceListWhite.removeIf(p -> p.equals(leavingSquare - 4)); 
-                            this.pieceListWhite.add(leavingSquare - 2);
+                            this.PLAYER1.pieceList.removeIf(p -> p.equals(leavingSquare - 4)); 
+                            this.PLAYER1.pieceList.add(leavingSquare - 2);
                         }
                     }
         
@@ -232,14 +228,14 @@ public class Controller {
                     if (c == "B") {
                         // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
                         //king
-                        this.pieceListBlack.removeIf(p -> p.equals(attackingSquare)); 
-                        this.pieceListBlack.add(capturedSquare);
-                        this.pieceListWhite.removeIf(p -> p.equals(capturedSquare));
+                        this.PLAYER2.pieceList.removeIf(p -> p.equals(attackingSquare)); 
+                        this.PLAYER2.pieceList.add(capturedSquare);
+                        this.PLAYER1.pieceList.removeIf(p -> p.equals(capturedSquare));
                     }
                     else {
-                        this.pieceListWhite.removeIf(p -> p.equals(attackingSquare)); 
-                        this.pieceListWhite.add(capturedSquare);
-                        this.pieceListBlack.removeIf(p -> p.equals(capturedSquare));
+                        this.PLAYER1.pieceList.removeIf(p -> p.equals(attackingSquare)); 
+                        this.PLAYER1.pieceList.add(capturedSquare);
+                        this.PLAYER2.pieceList.removeIf(p -> p.equals(capturedSquare));
                     }
         
         this.endTurn();
@@ -261,14 +257,14 @@ public class Controller {
                     if (c == "B") {
                         // im using removeif because .remove() is overloaded, index or object and our object is an int so testing is needed
                         //king
-                        this.pieceListBlack.removeIf(p -> p.equals(attackingSquare)); 
-                        this.pieceListBlack.add(capturedSquare);
-                        this.pieceListWhite.removeIf(p -> p.equals(this.enPassantPiece));
+                        this.PLAYER2.pieceList.removeIf(p -> p.equals(attackingSquare)); 
+                        this.PLAYER2.pieceList.add(capturedSquare);
+                        this.PLAYER1.pieceList.removeIf(p -> p.equals(this.enPassantPiece));
                     }
                     else {
-                        this.pieceListWhite.removeIf(p -> p.equals(attackingSquare)); 
-                        this.pieceListWhite.add(capturedSquare);
-                        this.pieceListBlack.removeIf(p -> p.equals(this.enPassantPiece));
+                        this.PLAYER1.pieceList.removeIf(p -> p.equals(attackingSquare)); 
+                        this.PLAYER1.pieceList.add(capturedSquare);
+                        this.PLAYER2.pieceList.removeIf(p -> p.equals(this.enPassantPiece));
                     }
         
         this.endTurn();
@@ -281,6 +277,7 @@ public class Controller {
     
     private void endTurn() {
         if ("W".equals(this.currentPlayer.color)) {
+
             this.currentPlayer = this.PLAYER2;
             if (this.enPassantPiece >=0) {
                 if (this.GAMEBOARD.Squares.get(this.enPassantPiece).Piece.color == "B") {
@@ -288,6 +285,11 @@ public class Controller {
                     this.enPassantSquare = -1;
                 }
            }
+        this.getCheckSquares();
+        System.out.println(this.currentPlayer.color + " bad moves"); 
+        for (int s : this.illegalSquaresBlackKing) {
+            System.out.println(s);
+        }
         }
         else {
             this.currentPlayer = this.PLAYER1;
@@ -296,25 +298,90 @@ public class Controller {
                     this.enPassantPiece = -1;
                     this.enPassantSquare = -1;
                 }
-           }
+            }
+            this.getCheckSquares();
+            
+            System.out.println(this.currentPlayer.color + " bad moves"); 
+            for (int s : this.illegalSquaresWhiteKing) {
+                System.out.println(s);
+            }
         }
-//        System.out.println("BLACK:");
-//        Iterator itb = this.pieceListBlack.iterator();
-//        while(itb.hasNext()) {
-//            System.out.println(itb.next());
-//        }
-//        System.out.println("WHITE:");
-//        Iterator itw = this.pieceListWhite.iterator();
-//        while(itw.hasNext()) {
-//            System.out.println(itw.next());
-//        }
-    }
-
-    private void getBadSquares() {
-        //maybe get list of bad squares for kings here or do it in getLegalMoves
     }
     
-    public void getLegalMoves(int squareID) {
+    public void getCheckSquares() {
+        //for player black
+        if (this.currentPlayer == this.PLAYER2) {
+            this.illegalSquaresBlackKing.clear();
+            for (int p : this.PLAYER1.pieceList) {
+                if (this.GAMEBOARD.Squares.get(p).Piece.type != Piece.Type.PAWN) {
+                    List<Integer> pMoves = this.getLegalMoves(p);
+                    for (int s : pMoves) {
+                        this.illegalSquaresBlackKing.add(p + s);
+                    }
+                }
+                else {
+                    List<Integer> mooves = new ArrayList<>();
+                    int colorModifier = 1;
+                    Piece cocksucker = this.GAMEBOARD.Squares.get(p).Piece;
+                    switch (cocksucker.color) {
+                            case "W":   colorModifier = -1;
+                                                    break;
+                            case "B":   colorModifier = 1;
+                                                    break;
+                            default:    System.out.println("Something fucky wucky Controller line ~330");
+                    }
+                    int[] pawnAttacks = cocksucker.getMoves();
+                    for (int i = 0; i < pawnAttacks.length; i++) {
+                        int move = pawnAttacks[i] * colorModifier;
+                        //if the square we are checking for moving to exists
+                        if (this.GAMEBOARD.FLAT_EARTH.contains(p + move)) {
+                            mooves.add(pawnAttacks[i] * colorModifier);
+                        }
+                    }
+                    for (int s : mooves) {
+                        this.illegalSquaresBlackKing.add(p + s);
+                    }
+                }
+            }
+        }
+        //for player white
+        else {
+            this.illegalSquaresWhiteKing.clear();
+            for (int p : this.PLAYER2.pieceList) {
+                if (this.GAMEBOARD.Squares.get(p).Piece.type != Piece.Type.PAWN) {
+                    List<Integer> pMoves = this.getLegalMoves(p);
+                    for (int s : pMoves) {
+                        this.illegalSquaresWhiteKing.add(p + s);
+                    }
+                }
+                else {
+                    List<Integer> mooves = new ArrayList<>();
+                    int colorModifier = 1;
+                    Piece cocksucker = this.GAMEBOARD.Squares.get(p).Piece;
+                    switch (cocksucker.color) {
+                            case "W":   colorModifier = -1;
+                                                    break;
+                            case "B":   colorModifier = 1;
+                                                    break;
+                            default:    System.out.println("Something fucky wucky Controller line ~330");
+                    }
+                    int[] pawnAttacks = cocksucker.getMoves();
+                    for (int i = 0; i < pawnAttacks.length; i++) {
+                        int move = pawnAttacks[i] * colorModifier;
+                        //if the square we are checking for moving to exists
+                        if (this.GAMEBOARD.FLAT_EARTH.contains(p + move)) {
+                            mooves.add(pawnAttacks[i] * colorModifier);
+                        }
+                    }
+                    for (int s : mooves) {
+                        this.illegalSquaresWhiteKing.add(p + s);
+                    }
+                }
+            }
+        }
+    }
+    
+    public List<Integer> getLegalMoves(int squareID) {
         this.legalMoves.clear();
         
         /*
@@ -331,7 +398,7 @@ public class Controller {
                                             break;
                     case "B":   colorModifier = 1;
                                             break;
-                    default:    System.out.println("Something fucky wucky Controller line ~130");
+                    default:    System.out.println("Something fucky wucky Controller line ~366");
             }
             
             List<Integer> pawnMoves = new ArrayList<Integer>();
@@ -358,11 +425,12 @@ public class Controller {
                 }
             }
             
-            Iterator itPawnMoves = pawnMoves.iterator();
-            while(itPawnMoves.hasNext()) {
-                int m = (int)itPawnMoves.next();
-                this.legalMoves.add(m);
-            }
+            return pawnMoves;
+//            Iterator itPawnMoves = pawnMoves.iterator();
+//            while(itPawnMoves.hasNext()) {
+//                int m = (int)itPawnMoves.next();
+//                this.legalMoves.add(m);
+//            }
         }
         /*
             KING -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
@@ -371,12 +439,12 @@ public class Controller {
             List<Integer> kingMoves = new ArrayList<Integer>();
             
             for (int i = 0; i < p.moves.length; i++) {
-                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) &&
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + p.moves[i]) && !this.kingMovesChecker(this.currentPlayer.color, squareID + p.moves[i]) &&
                         (!this.GAMEBOARD.Squares.get(squareID + p.moves[i]).isOccupied() ||
                             this.GAMEBOARD.Squares.get(squareID + p.moves[i]).Piece.color != p.color)) {
                     kingMoves.add(p.moves[i]);
                 }
-                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) &&
+                if (this.GAMEBOARD.FLAT_EARTH.contains(squareID + (p.moves[i] * -1)) && !this.kingMovesChecker(this.currentPlayer.color, squareID + (p.moves[i] * -1)) &&
                         (!this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).isOccupied() ||
                             this.GAMEBOARD.Squares.get(squareID + (p.moves[i] * -1)).Piece.color != p.color)) {
                     kingMoves.add(p.moves[i] * -1);
@@ -389,20 +457,23 @@ public class Controller {
             
             if (p.onSpot) {
                 if (this.GAMEBOARD.Squares.get(squareID + 3).Piece.onSpot && 
-                        (!this.GAMEBOARD.Squares.get(squareID + 1).isOccupied() && !this.GAMEBOARD.Squares.get(squareID + 2).isOccupied())) {
+                        (!this.GAMEBOARD.Squares.get(squareID + 1).isOccupied() && !this.GAMEBOARD.Squares.get(squareID + 2).isOccupied())
+                            && !this.kingMovesChecker(this.currentPlayer.color, squareID + 2)) {
                     kingMoves.add(p.getCastlingMoves()[0]);
                 }
                 if (this.GAMEBOARD.Squares.get(squareID - 4).Piece.onSpot && 
-                        (!this.GAMEBOARD.Squares.get(squareID - 1).isOccupied() && !this.GAMEBOARD.Squares.get(squareID - 2).isOccupied() && !this.GAMEBOARD.Squares.get(squareID - 3).isOccupied())) {
+                        (!this.GAMEBOARD.Squares.get(squareID - 1).isOccupied() && !this.GAMEBOARD.Squares.get(squareID - 2).isOccupied() && !this.GAMEBOARD.Squares.get(squareID - 3).isOccupied())
+                            && !this.kingMovesChecker(this.currentPlayer.color, squareID - 3)) {
                     kingMoves.add(p.getCastlingMoves()[1]);
                 }
             }
 
-            Iterator itKingMoves = kingMoves.iterator();
-            while(itKingMoves.hasNext()) {
-                int m = (int)itKingMoves.next();
-                this.legalMoves.add(m);
-            }
+            return kingMoves;
+//            Iterator itKingMoves = kingMoves.iterator();
+//            while(itKingMoves.hasNext()) {
+//                int m = (int)itKingMoves.next();
+//                this.legalMoves.add(m);
+//            }
         }
         /*
             kNIGHT -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
@@ -422,12 +493,13 @@ public class Controller {
                     knightMoves.add(p.moves[i] * -1);
                 }
             }
-
-            Iterator itkNightMoves = knightMoves.iterator();
-            while(itkNightMoves.hasNext()) {
-                int m = (int)itkNightMoves.next();
-                this.legalMoves.add(m);
-            }
+            
+            return knightMoves;
+//            Iterator itkNightMoves = knightMoves.iterator();
+//            while(itkNightMoves.hasNext()) {
+//                int m = (int)itkNightMoves.next();
+//                this.legalMoves.add(m);
+//            }
         }
         /*
             QUEEN, BISHOP, ROOK -~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~-~
@@ -470,17 +542,27 @@ public class Controller {
                     ogresHaveLayers += 1;
                 }
             }
-
-            Iterator itPieceMoves = pieceMoves.iterator();
-            while(itPieceMoves.hasNext()) {
-                int m = (int)itPieceMoves.next();
-                this.legalMoves.add(m);
-            }
+            
+            return pieceMoves;
+//            Iterator itPieceMoves = pieceMoves.iterator();
+//            while(itPieceMoves.hasNext()) {
+//                int m = (int)itPieceMoves.next();
+//                this.legalMoves.add(m);
+//            }
         }
     }
 
+    private boolean kingMovesChecker(String color, int squareToCheck) {
+        if (color == "W") {
+            return this.illegalSquaresWhiteKing.contains(squareToCheck);
+        }
+        else {
+            return this.illegalSquaresBlackKing.contains(squareToCheck);
+        }
+    }
+    
     public int moveAI(int squareID){
-      getLegalMoves(squareID);
+      this.legalMoves = getLegalMoves(squareID);
       movePiece(squareID,legalMoves.get(legalMoves.size()-1)+squareID);
       return (squareID + legalMoves.get(legalMoves.size()-1));
     }

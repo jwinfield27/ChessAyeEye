@@ -1,10 +1,14 @@
 package ChessAyeEye;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Player {
     public String color = "W";
     
     private int heldPiece = -1;
     private boolean holdingPiece = false;
+    public List<Integer> pieceList  = new ArrayList<>(16);
     
     public Player(String color){
         this.color = color;
