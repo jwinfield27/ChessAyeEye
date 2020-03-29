@@ -321,21 +321,13 @@ public class Controller {
                 }
                 else {
                     List<Integer> mooves = new ArrayList<>();
-                    int colorModifier = 1;
                     Piece cocksucker = this.GAMEBOARD.Squares.get(p).Piece;
-                    switch (cocksucker.color) {
-                            case "W":   colorModifier = -1;
-                                                    break;
-                            case "B":   colorModifier = 1;
-                                                    break;
-                            default:    System.out.println("Something fucky wucky Controller line ~330");
-                    }
-                    int[] pawnAttacks = cocksucker.getMoves();
+                    int[] pawnAttacks = cocksucker.getPawnAttacks();
                     for (int i = 0; i < pawnAttacks.length; i++) {
-                        int move = pawnAttacks[i] * colorModifier;
+                        int move = pawnAttacks[i] * -1;
                         //if the square we are checking for moving to exists
                         if (this.GAMEBOARD.FLAT_EARTH.contains(p + move)) {
-                            mooves.add(pawnAttacks[i] * colorModifier);
+                            mooves.add(move);
                         }
                     }
                     for (int s : mooves) {
@@ -356,21 +348,13 @@ public class Controller {
                 }
                 else {
                     List<Integer> mooves = new ArrayList<>();
-                    int colorModifier = 1;
                     Piece cocksucker = this.GAMEBOARD.Squares.get(p).Piece;
-                    switch (cocksucker.color) {
-                            case "W":   colorModifier = -1;
-                                                    break;
-                            case "B":   colorModifier = 1;
-                                                    break;
-                            default:    System.out.println("Something fucky wucky Controller line ~330");
-                    }
-                    int[] pawnAttacks = cocksucker.getMoves();
+                    int[] pawnAttacks = cocksucker.getPawnAttacks();
                     for (int i = 0; i < pawnAttacks.length; i++) {
-                        int move = pawnAttacks[i] * colorModifier;
+                        int move = pawnAttacks[i];
                         //if the square we are checking for moving to exists
                         if (this.GAMEBOARD.FLAT_EARTH.contains(p + move)) {
-                            mooves.add(pawnAttacks[i] * colorModifier);
+                            mooves.add(pawnAttacks[i]);
                         }
                     }
                     for (int s : mooves) {
